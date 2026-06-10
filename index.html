@@ -791,7 +791,7 @@
                     syncAdminTracksList();
                     document.getElementById('adminDashboard').classList.add('active');
                 } else {
-                    alert("Accesso Negato. Questo account Google non ha i privilegi di amministrazione.");
+                    alert("Accesso Negato. Questo account Google non ha i privileges di amministrazione.");
                     await signOut(auth);
                 }
             } catch(error) {
@@ -819,8 +819,12 @@
         // --- CRUD OPERAZIONI AMMINISTRATORE ---
         async function commitTrackForm(event) {
             event.preventDefault();
-            if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) {
-                return alert("Devi prima autenticarti come amministratore.");
+            
+            if(!auth.currentUser) {
+                return alert("Errore: Non risulta nessun utente autenticato. Effettua nuovamente il login alla Dashboard.");
+            }
+            if(auth.currentUser.email !== ADMIN_EMAIL) {
+                return alert("Errore: L'account corrente (" + auth.currentUser.email + ") non ha i permessi amministratore.");
             }
 
             const targetId = document.getElementById('editingTrackId').value;
@@ -836,13 +840,16 @@
                 if(targetId === "") {
                     const newTrackRef = push(ref(rtdb, 'brani'));
                     await set(newTrackRef, trackPayload);
-                    alert("Nuovo brano pubblicato con successo!");
+                    alert("Nuovo brano pubblicato in Home con successo!");
                 } else {
                     await set(ref(rtdb, 'brani/' + targetId), trackPayload);
                     alert("Brano modificato con successo!");
                 }
                 resetFormState();
-            } catch(e) { alert("Errore di scrittura: " + e.message); }
+            } catch(e) { 
+                console.error("Errore Firebase Write:", e);
+                alert("Errore durante il caricamento del brano: " + e.message + "\n\nControlla di aver aggiornato correttamente le 'Rules' (Regole) della scheda Realtime Database sulla console Firebase."); 
+            }
         }
 
         async function deleteTrack(id) {

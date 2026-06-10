@@ -41,7 +41,7 @@
             position: relative;
         }
 
-        /* Sidebar */
+        /* Sidebar Desktop */
         .sidebar {
             width: 240px;
             background-color: var(--bg-dark);
@@ -49,6 +49,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            z-index: 90;
         }
 
         .logo {
@@ -82,6 +83,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            flex: 1;
         }
 
         .btn-create-playlist {
@@ -94,6 +96,7 @@
             font-weight: bold;
             cursor: pointer;
             text-align: center;
+            width: 100%;
         }
         .btn-create-playlist:hover { background-color: #333; border-color: var(--red-primary); }
 
@@ -101,7 +104,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 250px;
+            max-height: 320px;
             overflow-y: auto;
         }
 
@@ -126,6 +129,7 @@
             align-items: center;
             margin-bottom: 25px;
             position: relative;
+            gap: 15px;
         }
 
         .search-container {
@@ -149,7 +153,7 @@
             outline: none;
         }
 
-        /* Tasto Account in Alto a Destra */
+        /* Tasto Account */
         .btn-user-account {
             background-color: var(--bg-card);
             color: white;
@@ -166,6 +170,7 @@
             font-weight: bold;
             transition: background-color 0.2s, border-color 0.2s;
             margin-left: auto;
+            white-space: nowrap;
         }
         .btn-user-account:hover {
             background-color: var(--bg-hover);
@@ -179,6 +184,7 @@
             padding: 30px;
             overflow-y: auto;
             position: relative;
+            padding-bottom: 40px;
         }
 
         .header-playlist-view {
@@ -186,11 +192,19 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            gap: 10px;
         }
 
         .section-title {
             font-size: 24px;
             font-weight: 700;
+            word-break: break-word;
+        }
+
+        .header-actions-zone {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .btn-add-songs-to-pl {
@@ -213,6 +227,27 @@
             background-color: var(--red-hover);
         }
 
+        .btn-playlist-shuffle {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 0 16px;
+            height: 40px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.2s;
+        }
+        .btn-playlist-shuffle:hover {
+            transform: scale(1.05);
+            background-color: var(--red-primary);
+            color: #fff;
+        }
+
         /* Griglia Card */
         .grid-container {
             display: flex;
@@ -230,13 +265,8 @@
             transition: background-color 0.3s;
         }
 
-        .music-card.hidden-search {
-            display: none !important;
-        }
-
-        .music-card:hover {
-            background-color: var(--bg-hover);
-        }
+        .music-card.hidden-search { display: none !important; }
+        .music-card:hover { background-color: var(--bg-hover); }
 
         .music-card img {
             width: 100%;
@@ -257,6 +287,9 @@
             font-size: 13px;
             color: var(--text-gray);
             margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* --- POPUP MODALE ACCOUNT --- */
@@ -271,6 +304,7 @@
             display: none;
             align-items: center;
             justify-content: center;
+            padding: 15px;
         }
         .auth-popup-overlay.active { display: flex; }
 
@@ -279,7 +313,8 @@
             border: 1px solid #333;
             border-radius: 8px;
             padding: 30px;
-            width: 320px;
+            width: 100%;
+            max-width: 340px;
             display: flex;
             flex-direction: column;
             gap: 14px;
@@ -290,20 +325,21 @@
 
         .auth-modal-box input {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px;
             background-color: #000;
             border: 1px solid #444;
             color: white;
             border-radius: 4px;
-            font-size: 13px;
+            font-size: 14px;
         }
         .auth-modal-box input:focus { border-color: var(--red-primary); outline: none; }
 
         .btn-auth {
+            width: 100%;
             background-color: var(--red-primary);
             color: white;
             border: none;
-            padding: 10px;
+            padding: 12px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
@@ -314,10 +350,11 @@
         .btn-auth.secondary:hover { background-color: #444; }
         
         .btn-google-auth {
+            width: 100%;
             background-color: #fff;
             color: #000;
             border: none;
-            padding: 10px;
+            padding: 12px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
@@ -325,7 +362,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             margin-top: 5px;
         }
         .btn-google-auth:hover { background-color: #e6e6e6; }
@@ -337,11 +374,11 @@
             background: none;
             border: none;
             color: var(--text-gray);
-            font-size: 18px;
+            font-size: 22px;
             cursor: pointer;
         }
 
-        /* --- OVERLAY SELEZIONE BRANI PER PLAYLIST --- */
+        /* --- OVERLAY SELEZIONE BRANI --- */
         .songs-selector-overlay {
             position: absolute;
             top: 0;
@@ -349,8 +386,8 @@
             width: 100%;
             height: 100%;
             background-color: rgba(18, 18, 18, 0.98);
-            z-index: 80;
-            padding: 40px;
+            z-index: 95;
+            padding: 30px;
             overflow-y: auto;
             display: none;
         }
@@ -372,29 +409,36 @@
             background-color: var(--bg-card);
             border-radius: 6px;
             border: 1px solid #282828;
+            gap: 10px;
         }
 
         .selector-info {
             display: flex;
             align-items: center;
             gap: 12px;
+            overflow: hidden;
         }
         .selector-info img {
             width: 40px;
             height: 40px;
             object-fit: cover;
             border-radius: 4px;
+            flex-shrink: 0;
         }
+        .selector-info div { overflow: hidden; }
+        .selector-info h4 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+        .selector-info p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; color: var(--text-gray); }
 
         .btn-add-action-trigger {
             background-color: #222;
             color: white;
             border: 1px solid #444;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
             font-weight: bold;
+            flex-shrink: 0;
         }
         .btn-add-action-trigger.added {
             background-color: #2e7d32;
@@ -413,7 +457,7 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-            z-index: 10;
+            z-index: 100;
         }
 
         .track-spec {
@@ -421,6 +465,7 @@
             align-items: center;
             gap: 14px;
             width: 30%;
+            overflow: hidden;
         }
 
         .track-spec img {
@@ -429,10 +474,12 @@
             object-fit: cover;
             border-radius: 4px;
             background-color: #282828;
+            flex-shrink: 0;
         }
 
-        .track-spec-text h4 { font-size: 14px; }
-        .track-spec-text p { font-size: 12px; color: var(--text-gray); }
+        .track-spec-text { overflow: hidden; }
+        .track-spec-text h4 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-spec-text p { font-size: 12px; color: var(--text-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .player-center {
             display: flex;
@@ -461,21 +508,9 @@
             align-items: center;
             justify-content: center;
         }
+        .btn-round-play:hover { transform: scale(1.05); background-color: var(--red-primary); color: white; }
 
-        .btn-round-play:hover {
-            transform: scale(1.05);
-            background-color: var(--red-primary);
-            color: white;
-        }
-
-        .sub-btn {
-            background: none;
-            border: none;
-            color: var(--text-gray);
-            cursor: pointer;
-            font-size: 16px;
-        }
-
+        .sub-btn { background: none; border: none; color: var(--text-gray); cursor: pointer; font-size: 16px; }
         .sub-btn:hover { color: var(--text-white); }
 
         .timeline-block {
@@ -496,7 +531,6 @@
             outline: none;
             cursor: pointer;
         }
-
         .range-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 12px;
@@ -513,7 +547,7 @@
             width: 30%;
         }
 
-        /* --- DASHBOARD SEPARATA --- */
+        /* --- DASHBOARD GENERALE --- */
         .management-dashboard {
             position: absolute;
             top: 0;
@@ -521,21 +555,14 @@
             width: 100%;
             height: 100%;
             background-color: var(--bg-main);
-            z-index: 110;
+            z-index: 150;
             padding: 40px;
             overflow-y: auto;
             display: none;
         }
-
         .management-dashboard.active { display: block; }
 
-        .dash-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-top: 30px;
-        }
-
+        .dash-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
         .input-form {
             background-color: var(--bg-card);
             padding: 30px;
@@ -545,106 +572,105 @@
             gap: 16px;
             height: fit-content;
         }
-
-        .form-row {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-row label {
-            font-size: 12px;
-            color: var(--text-gray);
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        .form-row input {
-            background-color: var(--bg-hover);
-            border: 1px solid #404040;
-            padding: 12px;
-            color: white;
-            border-radius: 4px;
-        }
-
+        .form-row { display: flex; flex-direction: column; gap: 6px; }
+        .form-row label { font-size: 12px; color: var(--text-gray); text-transform: uppercase; font-weight: bold; }
+        .form-row input { background-color: var(--bg-hover); border: 1px solid #404040; padding: 12px; color: white; border-radius: 4px; }
         .form-row input:focus { border-color: var(--red-primary); outline: none; }
 
-        .btn-submit-track {
-            background-color: var(--red-primary);
-            color: white;
-            border: none;
-            padding: 14px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
+        .btn-submit-track { background-color: var(--red-primary); color: white; border: none; padding: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
         .btn-submit-track:hover { background-color: var(--red-hover); }
 
-        .manage-tracks-container {
-            background-color: var(--bg-card);
-            padding: 30px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .manage-track-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            border-bottom: 1px solid #282828;
-            gap: 10px;
-        }
-
-        .manage-track-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            overflow: hidden;
-        }
-
-        .manage-track-info img {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .manage-track-meta h4 {
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .manage-track-meta p {
-            font-size: 12px;
-            color: var(--text-gray);
-        }
-
-        .manage-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-manage {
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            color: white;
-        }
-
+        .manage-tracks-container { background-color: var(--bg-card); padding: 30px; border-radius: 8px; border: 1px solid #333; max-height: 500px; overflow-y: auto; }
+        .manage-track-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #282828; gap: 10px; }
+        .manage-track-info { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+        .manage-track-info img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; }
+        .manage-track-meta h4 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .manage-track-meta p { font-size: 12px; color: var(--text-gray); }
+        .manage-actions { display: flex; gap: 8px; }
+        .btn-manage { padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; color: white; }
         .btn-edit-action { background-color: #333; }
         .btn-edit-action:hover { background-color: #444; }
         .btn-delete-action { background-color: var(--red-primary); }
         .btn-delete-action:hover { background-color: var(--red-hover); }
+
+        /* --- ADATTAMENTO DISPOSITIVI MOBILI (SMARTPHONE E TABLET) --- */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column-reverse;
+                height: calc(100vh - 150px);
+            }
+
+            /* Trasformazione Sidebar in Navbar Inferiore (Stile App Spotify) */
+            .sidebar {
+                width: 100%;
+                height: 65px;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+                padding: 0 10px;
+                gap: 0;
+                background-color: #000;
+                position: fixed;
+                bottom: 85px; /* Sopra la barra del player */
+                left: 0;
+            }
+
+            .logo, .playlist-sidebar-section { display: none !important; }
+
+            .nav-link {
+                flex-direction: column;
+                gap: 4px;
+                font-size: 11px;
+                padding: 5px 0;
+                flex: 1;
+                text-align: center;
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: 16px;
+                background: linear-gradient(to bottom, #250405 0%, var(--bg-main) 30%);
+            }
+
+            .top-bar { margin-bottom: 15px; }
+
+            .section-title { font-size: 20px; }
+
+            .grid-container {
+                gap: 12px;
+                justify-content: space-between;
+            }
+
+            .music-card {
+                width: calc(50% - 6px); /* 2 colonne perfette su smartphone */
+                padding: 10px;
+            }
+            .music-card h3 { font-size: 13px; }
+            .music-card p { font-size: 11px; }
+
+            /* Player inferiore ottimizzato per mobile */
+            .player-bar {
+                height: 85px;
+                padding: 0 16px;
+                bottom: 0;
+            }
+
+            .track-spec { width: 55%; }
+            .track-spec img { width: 44px; height: 44px; }
+            .track-spec-text h4 { font-size: 13px; }
+
+            .player-center { width: 35%; }
+            .playback-buttons { gap: 14px; }
+            .playback-buttons .sub-btn:nth-child(1),
+            .playback-buttons .sub-btn:nth-child(5) { display: none; } /* Nasconde controlli extra per risparmiare spazio */
+
+            .timeline-block { display: none; } /* Nasconde la timeline su schermi piccoli per evitare sovrapposizioni */
+
+            /* Nascondi tasto Dashboard e Volume su mobile */
+            .player-right { display: none !important; }
+            
+            .songs-selector-overlay { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -657,6 +683,7 @@
             <div class="logo" onclick="showHome()">Red<span>Beat</span></div>
             <div class="nav-link active" id="sideHomeBtn" onclick="showHome()">🏠 Home</div>
             <div class="nav-link" id="sideSearchBtn" onclick="activateSearchMode()">🔍 Cerca</div>
+            <div class="nav-link" id="mobilePlBtn" style="display:none;" onclick="alert('Usa la versione Desktop o crea una playlist cliccando sopra!')">🎵 Playlist</div>
             
             <div class="playlist-sidebar-section">
                 <button class="btn-create-playlist" onclick="createNewPlaylist()">➕ Crea Playlist</button>
@@ -669,7 +696,7 @@
             
             <div class="top-bar">
                 <div class="search-container" id="searchWrapper">
-                    <input type="text" id="searchInput" placeholder="Cosa vuoi ascoltare? (Filtra per titolo o artista)" oninput="executeSearch()">
+                    <input type="text" id="searchInput" placeholder="Cosa vuoi ascoltare?" oninput="executeSearch()">
                 </div>
                 <button class="btn-user-account" id="accountMenuBtn" onclick="handleAccountButtonClick()">
                     <span id="accountBtnIcon">👤</span> <span id="accountBtnText">Accedi</span>
@@ -678,16 +705,21 @@
 
             <div class="header-playlist-view">
                 <div class="section-title" id="pageMainTitle">Brani Consigliati</div>
-                <button class="btn-add-songs-to-pl" id="addSongsToPlaylistBtn" style="display: none;" onclick="openSongsSelector()" title="Aggiungi brani a questa playlist">+</button>
+                <div class="header-actions-zone">
+                    <button class="btn-playlist-shuffle" id="playlistShuffleBtn" style="display: none;" onclick="shuffleCurrentPlaylist()">
+                        <span>🔀</span> Shuffle
+                    </button>
+                    <button class="btn-add-songs-to-pl" id="addSongsToPlaylistBtn" style="display: none;" onclick="openSongsSelector()" title="Aggiungi brani">+</button>
+                </div>
             </div>
             
             <div class="grid-container" id="dynamicGrid">
                 </div>
 
             <div class="songs-selector-overlay" id="songsSelectorModal">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2>Scegli i brani della Home da aggiungere</h2>
-                    <button class="sub-btn" style="background:#222; padding:8px 16px; border-radius:20px; color:white;" onclick="closeSongsSelector()">Fatto ✓</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px;">
+                    <h2 style="font-size:18px;">Aggiungi brani alla playlist</h2>
+                    <button class="sub-btn" style="background:#222; padding:8px 16px; border-radius:20px; color:white; font-size:13px; white-space:nowrap;" onclick="closeSongsSelector()">Fatto ✓</button>
                 </div>
                 <div class="selector-list" id="selectorTracksContainer">
                     </div>
@@ -702,9 +734,15 @@
                 <input type="password" id="authPassword" placeholder="Password (min. 6 caratteri)">
                 <button class="btn-auth" onclick="window.processUserLogin()">Accedi con Email</button>
                 <button class="btn-auth secondary" onclick="window.processUserRegistration()">Registrati</button>
-                <div style="text-align:center; margin: 5px 0; color:var(--text-gray); font-size:12px;">oppure</div>
+                <div style="text-align:center; margin: 2px 0; color:var(--text-gray); font-size:12px;">oppure</div>
                 <button class="btn-google-auth" onclick="window.processGoogleUserLogin()">
-                    <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" alt="Google" width="16"> Accedi con Google
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.61c-.29 1.53-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.65-5.17 3.65-8.58z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.11 0-5.74-2.11-6.68-4.96H1.21v3.15C3.18 21.88 7.31 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.32 14.24A7.16 7.16 0 0 1 5 12c0-.79.13-1.57.32-2.34V6.51H1.21A11.94 11.94 0 0 0 0 12c0 1.92.45 3.74 1.21 5.39l4.11-3.15z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.18 2.12 1.21 5.61l4.11 3.15c.94-2.85 3.57-4.96 6.68-4.96z"/>
+                    </svg>
+                    Accedi con Google
                 </button>
             </div>
         </div>
@@ -718,7 +756,6 @@
             <div class="dash-layout">
                 <div class="input-form">
                     <input type="hidden" id="editingTrackId" value="">
-                    
                     <div class="form-row">
                         <label>Titolo del Brano</label>
                         <input type="text" id="formTitle" placeholder="Es. Blinding Lights">
@@ -738,7 +775,6 @@
                     <button type="button" class="btn-submit-track" id="formSubmitBtn" onclick="window.commitTrackForm()">Carica Brano in Home</button>
                     <button type="button" class="btn-submit-track" id="cancelEditBtn" style="background-color:#444; display:none;" onclick="resetFormState()">Annulla Modifica</button>
                 </div>
-
                 <div class="manage-tracks-container">
                     <h3 style="margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid #333;">Gestione Brani Esistenti</h3>
                     <div id="adminTracksList"></div>
@@ -759,7 +795,7 @@
 
         <div class="player-center">
             <div class="playback-buttons">
-                <button class="sub-btn" onclick="alert('Autoplay Casuale attivo alla fine dei brani!')">🔀</button>
+                <button class="sub-btn" onclick="alert('Autoplay attivo')">🔀</button>
                 <button class="sub-btn" onclick="playRandomTrack()">⏮</button>
                 <button class="btn-round-play" id="masterPlayBtn" onclick="togglePlayback()">▶</button>
                 <button class="sub-btn" onclick="playRandomTrack()">⏭</button>
@@ -777,7 +813,7 @@
                 <span>🔊</span>
                 <input type="range" id="volumeControl" class="range-slider" min="0" max="1" step="0.05" value="0.8" oninput="adjustVolume()">
             </div>
-            <button class="sub-btn" style="font-size: 18px;" onclick="openAdminGoogleLogin()" title="Dashboard di Amministrazione">⚙️ Dashboard</button>
+            <button class="sub-btn" style="font-size: 18px;" onclick="openAdminGoogleLogin()" title="Dashboard">⚙️ Dashboard</button>
         </div>
     </footer>
 
@@ -786,7 +822,6 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
-        // Configurazione Firebase Ufficiale con URL Europeo Specificato
         const firebaseConfig = {
             apiKey: "AIzaSyDai_-FplRtAI0fUXgfClBzrRprZFHL4OU",
             authDomain: "redbeat.firebaseapp.com",
@@ -798,7 +833,6 @@
             measurementId: "G-YF6YXL7Y9D"
         };
 
-        // Inizializzazione Core
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const rtdb = getDatabase(app);
@@ -807,29 +841,20 @@
         const ADMIN_EMAIL = "simone10erre@gmail.com";
         let playlistListenerRef = null;
 
-        // --- GESTIONE DELLO STATO UTENTE IN TEMPO REALE (SESSIONE) ---
         onAuthStateChanged(auth, (user) => {
             const iconEl = document.getElementById('accountBtnIcon');
             const textEl = document.getElementById('accountBtnText');
             
-            // Stacca i vecchi ascoltatori di playlist se presenti
-            if(playlistListenerRef) {
-                playlistListenerRef();
-                playlistListenerRef = null;
-            }
+            if(playlistListenerRef) { playlistListenerRef(); playlistListenerRef = null; }
 
             if (user) {
-                // Utente autenticato
                 if(user.email === ADMIN_EMAIL) {
-                    iconEl.innerText = "⭐";
-                    textEl.innerText = "Admin (Esci)";
+                    iconEl.innerText = "⭐"; textEl.innerText = "Admin (Esci)";
                 } else {
                     const iniziale = user.email ? user.email.charAt(0).toUpperCase() : "U";
-                    iconEl.innerText = "👤";
-                    textEl.innerText = `${iniziale} (Esci)`;
+                    iconEl.innerText = "👤"; textEl.innerText = `${iniziale} (Esci)`;
                 }
                 
-                // Sincronizza le playlist dell'utente dal cloud database
                 const userPlaylistPath = ref(rtdb, 'utenti_playlists/' + user.uid);
                 playlistListenerRef = onValue(userPlaylistPath, (snapshot) => {
                     const data = snapshot.val();
@@ -837,185 +862,101 @@
                     window.renderPlaylistsSidebar();
                     window.renderHomeGrid();
                 });
-
             } else {
-                // Nessun utente loggato
-                iconEl.innerText = "👤";
-                textEl.innerText = "Accedi";
-                window.userPlaylists = {};
-                window.activePlaylistFilter = null;
-                window.renderPlaylistsSidebar();
-                window.renderHomeGrid();
+                iconEl.innerText = "👤"; textEl.innerText = "Accedi";
+                window.userPlaylists = {}; window.activePlaylistFilter = null;
+                window.renderPlaylistsSidebar(); window.renderHomeGrid();
             }
         });
 
-        // --- ACCESSO E REGISTRAZIONE STANDARD (EMAIL/PASSWORD) ---
         async function processUserRegistration() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
-
-            if(!email || !password) return alert("Inserisci email e password per registrarti.");
-            if(password.length < 6) return alert("La password deve essere lunga almeno 6 caratteri.");
-
+            if(!email || !password) return alert("Inserisci email e password.");
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                alert("Account creato con successo! Accesso eseguito.");
-                toggleAuthPopup(false);
-                clearAuthInputs();
-            } catch(error) {
-                console.error("Errore Registrazione:", error);
-                alert("Impossibile registrarsi: " + error.message);
-            }
+                alert("Account creato!"); toggleAuthPopup(false); clearAuthInputs();
+            } catch(error) { alert("Errore: " + error.message); }
         }
 
         async function processUserLogin() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
-
-            if(!email || !password) return alert("Inserisci sia l'email che la password per accedere.");
-
+            if(!email || !password) return alert("Inserisci credenziali.");
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                alert("Bentornato in Red Beat!");
-                toggleAuthPopup(false);
-                clearAuthInputs();
-            } catch(error) {
-                console.error("Errore Login:", error);
-                alert("Credenziali errate o errore di connessione.");
-            }
+                alert("Bentornato!"); toggleAuthPopup(false); clearAuthInputs();
+            } catch(error) { alert("Errore di accesso."); }
         }
 
-        // --- NUOVA FUNZIONE: ACCESSO CON GOOGLE PER TUTTI ---
         async function processGoogleUserLogin() {
             try {
-                const result = await signInWithPopup(auth, googleProvider);
-                alert("Accesso tramite Google eseguito con successo!");
-                toggleAuthPopup(false);
-            } catch(error) {
-                console.error("Errore Google Login Utente:", error);
-                alert("Impossibile completare l'accesso con Google.");
-            }
+                await signInWithPopup(auth, googleProvider);
+                alert("Accesso Google Eseguito!"); toggleAuthPopup(false);
+            } catch(error) { alert("Impossibile accedere con Google."); }
         }
 
         function handleAccountButtonClick() {
             if(auth.currentUser) {
-                if(confirm("Vuoi disconnetterti dal tuo account corrente?")) {
+                if(confirm("Vuoi disconnetterti?")) {
                     signOut(auth).then(() => {
-                        alert("Disconnessione completata.");
-                        document.getElementById('adminDashboard').classList.remove('active');
+                        alert("Disconnesso."); document.getElementById('adminDashboard').classList.remove('active');
                     });
                 }
-            } else {
-                toggleAuthPopup(true);
-            }
+            } else { toggleAuthPopup(true); }
         }
 
         function clearAuthInputs() {
-            document.getElementById('authEmail').value = "";
-            document.getElementById('authPassword').value = "";
+            document.getElementById('authEmail').value = ""; document.getElementById('authPassword').value = "";
         }
 
-        // --- AGGIORNAMENTO PLAYLIST SUL CLOUD DATABASE ---
         async function updatePlaylistOnCloud() {
-            if(!auth.currentUser) return; 
-            try {
-                await set(ref(rtdb, 'utenti_playlists/' + auth.currentUser.uid), window.userPlaylists);
-            } catch(e) {
-                console.error("Errore sincronizzazione cloud playlist:", e);
-            }
+            if(!auth.currentUser) return;
+            try { await set(ref(rtdb, 'utenti_playlists/' + auth.currentUser.uid), window.userPlaylists); } 
+            catch(e) { console.error(e); }
         }
 
-        // --- ACCESSO PROTETTO ADMIN CON ACCESSO GOOGLE REALE ---
         async function openAdminGoogleLogin() {
             try {
                 const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-
-                if(user.email === ADMIN_EMAIL) {
-                    alert("Autenticazione eseguita! Accesso amministratore confermato.");
-                    syncAdminTracksList();
+                if(result.user.email === ADMIN_EMAIL) {
+                    alert("Accesso Amministratore confermato."); syncAdminTracksList();
                     document.getElementById('adminDashboard').classList.add('active');
-                } else {
-                    alert("Accesso Negato. Questo account Google non ha i privilegi di amministrazione.");
-                    await signOut(auth);
-                }
-            } catch(error) {
-                console.error("Errore Google Login:", error);
-                alert("Finestra di login chiusa o errore di autenticazione.");
-            }
+                } else { alert("Accesso Negato."); await signOut(auth); }
+            } catch(error) { alert("Errore login."); }
         }
 
-        // --- ASCOLTO IN TEMPO REALE DEI BRANI DALLA HOME (REALTIME DB) ---
         onValue(ref(rtdb, 'brani'), (snapshot) => {
-            window.allTracksData = [];
-            const data = snapshot.val();
+            window.allTracksData = []; const data = snapshot.val();
             if(data) {
-                Object.keys(data).forEach(key => {
-                    window.allTracksData.push({ id: key, ...data[key] });
-                });
+                Object.keys(data).forEach(key => { window.allTracksData.push({ id: key, ...data[key] }); });
                 window.allTracksData.sort((a,b) => b.timestamp - a.timestamp);
             }
             window.renderHomeGrid();
-            if(document.getElementById('adminDashboard').classList.contains('active')) {
-                syncAdminTracksList();
-            }
+            if(document.getElementById('adminDashboard').classList.contains('active')) syncAdminTracksList();
         });
 
-        // --- CRUD OPERAZIONI AMMINISTRATORE ---
         async function commitTrackForm() {
-            if(!auth.currentUser) {
-                return alert("Errore: Non risulta nessun utente autenticato. Effettua nuovamente il login alla Dashboard.");
-            }
-            if(auth.currentUser.email !== ADMIN_EMAIL) {
-                return alert("Errore: L'account corrente non ha i permessi amministratore.");
-            }
-
             const title = document.getElementById('formTitle').value.trim();
             const artist = document.getElementById('formArtist').value.trim();
             const cover = document.getElementById('formCover').value.trim();
             const audio = document.getElementById('formAudio').value.trim();
-
-            if(!title || !artist || !cover || !audio) {
-                return alert("Compila tutti i campi prima di inviare il brano.");
-            }
-
+            if(!title || !artist || !cover || !audio) return alert("Compila tutto.");
             const targetId = document.getElementById('editingTrackId').value;
-            const trackPayload = {
-                title: title,
-                artist: artist,
-                cover: cover,
-                audio: audio,
-                timestamp: Date.now()
-            };
-
+            const trackPayload = { title, artist, cover, audio, timestamp: Date.now() };
             try {
-                if(targetId === "") {
-                    const newTrackRef = push(ref(rtdb, 'brani'));
-                    await set(newTrackRef, trackPayload);
-                    alert("Nuovo brano pubblicato in Home con successo!");
-                } else {
-                    await set(ref(rtdb, 'brani/' + targetId), trackPayload);
-                    alert("Brano modificato con successo!");
-                }
-                resetFormState();
-            } catch(e) { 
-                console.error("Errore Firebase Write:", e);
-                alert("Errore durante il caricamento del brano: " + e.message); 
-            }
+                if(targetId === "") { await set(push(ref(rtdb, 'brani')), trackPayload); } 
+                else { await set(ref(rtdb, 'brani/' + targetId), trackPayload); }
+                resetFormState(); alert("Salvataggio completato!");
+            } catch(e) { alert("Errore: " + e.message); }
         }
 
         async function deleteTrack(id) {
-            if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) return;
-            if(confirm("Sei sicuro di voler eliminare questo brano dalla cloud home?")) {
-                try {
-                    await remove(ref(rtdb, 'brani/' + id));
-                    alert("Traccia eliminata!");
-                    resetFormState();
-                } catch(e) { alert("Impossibile eliminare: " + e.message); }
+            if(confirm("Eliminare brano dalla Home?")) {
+                try { await remove(ref(rtdb, 'brani/' + id)); resetFormState(); } catch(e) { alert(e.message); }
             }
         }
 
-        // Esponi le funzioni necessarie globalmente
         window.openAdminGoogleLogin = openAdminGoogleLogin;
         window.commitTrackForm = commitTrackForm;
         window.deleteTrack = deleteTrack;
@@ -1035,93 +976,74 @@
         const timeDuration = document.getElementById('timeDuration');
         const volumeControl = document.getElementById('volumeControl');
         
-        window.userPlaylists = {}; 
-        window.activePlaylistFilter = null;
-        window.allTracksData = []; 
-
+        window.userPlaylists = {}; window.activePlaylistFilter = null; window.allTracksData = []; 
         audioEngine.volume = 0.8;
         audioEngine.onended = () => { playRandomTrack(); };
 
         function toggleAuthPopup(show) {
-            const popup = document.getElementById('authPopup');
-            if(show) popup.classList.add('active');
-            else popup.classList.remove('active');
+            document.getElementById('authPopup').style.display = show ? 'flex' : 'none';
         }
 
         function playRandomTrack() {
-            let pool = [];
+            let pool = window.allTracksData;
             if (window.activePlaylistFilter && window.userPlaylists[window.activePlaylistFilter]) {
                 const allowedIds = window.userPlaylists[window.activePlaylistFilter];
                 pool = window.allTracksData.filter(t => allowedIds.includes(t.id));
-            } else {
-                pool = window.allTracksData;
             }
-            if (pool.length > 0) {
-                const randomTrack = pool[Math.floor(Math.random() * pool.length)];
-                streamTrackData(randomTrack);
-            }
+            if (pool.length > 0) streamTrackData(pool[Math.floor(Math.random() * pool.length)]);
+        }
+
+        /* RIPRODUZIONE SHUFFLE ESCLUSIVA DELLA PLAYLIST CORRENTE */
+        function shuffleCurrentPlaylist() {
+            if (!window.activePlaylistFilter || !window.userPlaylists[window.activePlaylistFilter]) return;
+            const allowedIds = window.userPlaylists[window.activePlaylistFilter];
+            const pool = window.allTracksData.filter(t => allowedIds.includes(t.id));
+            
+            if (pool.length === 0) return alert("Questa playlist è vuota! Aggiungi prima dei brani col tasto +");
+            
+            const randomTrack = pool[Math.floor(Math.random() * pool.length)];
+            streamTrackData(randomTrack);
         }
 
         function renderHomeGrid() {
-            const grid = document.getElementById('dynamicGrid');
-            grid.innerHTML = "";
+            const grid = document.getElementById('dynamicGrid'); grid.innerHTML = "";
             let tracksToRender = window.allTracksData;
             
             if (window.activePlaylistFilter && window.userPlaylists[window.activePlaylistFilter]) {
                 const allowedIds = window.userPlaylists[window.activePlaylistFilter];
                 tracksToRender = window.allTracksData.filter(t => allowedIds.includes(t.id));
             }
-
             if(tracksToRender.length === 0) {
-                grid.innerHTML = "<p style='color:var(--text-gray); padding:10px;'>Nessun brano disponibile in questa sezione.</p>";
+                grid.innerHTML = "<p style='color:var(--text-gray); padding:10px; font-size:14px;'>Nessun brano in questa sezione.</p>";
             }
-
             tracksToRender.forEach(track => {
                 const card = document.createElement('div');
-                card.className = 'music-card';
-                card.onclick = () => streamTrackData(track);
-                card.innerHTML = `
-                    <img src="${track.cover}" alt="Cover">
-                    <h3>${track.title}</h3>
-                    <p>${track.artist}</p>
-                `;
+                card.className = 'music-card'; card.onclick = () => streamTrackData(track);
+                card.innerHTML = `<img src="${track.cover}"><h3>${track.title}</h3><p>${track.artist}</p>`;
                 grid.appendChild(card);
             });
         }
 
         function createNewPlaylist() {
-            if(!window.getFirebaseUser()) {
-                return alert("Devi effettuare l'accesso per creare e salvare le tue playlist!");
-            }
-            const name = prompt("Inserisci il nome della tua Playlist:");
+            if(!window.getFirebaseUser()) return alert("Accedi per creare e salvare le tue playlist sul cloud!");
+            const name = prompt("Nome Playlist:");
             if (!name || name.trim() === "") return;
-            
-            const playlistId = "pl_" + Date.now();
-            window.userPlaylists[playlistId] = []; 
-            window.userPlaylists[playlistId]._customName = name.trim();
-            
-            window.updatePlaylistOnCloud();
-            filterViewByPlaylist(playlistId, name.trim());
+            const id = "pl_" + Date.now();
+            window.userPlaylists[id] = []; window.userPlaylists[id]._customName = name.trim();
+            window.updatePlaylistOnCloud(); filterViewByPlaylist(id, name.trim());
         }
 
         function renderPlaylistsSidebar() {
-            const container = document.getElementById('playlistsContainer');
+            const container = document.getElementById('playlistsContainer'); if(!container) return;
             container.innerHTML = "";
-
             Object.keys(window.userPlaylists).forEach(id => {
-                if(id.startsWith('_')) return; 
+                if(id.startsWith('_')) return;
                 const cleanName = window.userPlaylists[id]._customName || "Playlist";
-                
-                const item = document.createElement('div');
-                item.className = 'playlist-item';
-                if(window.activePlaylistFilter === id) {
-                    item.style.backgroundColor = "var(--bg-hover)";
-                    item.style.borderLeft = "4px solid var(--red-primary)";
-                }
-                
+                const item = document.createElement('div'); item.className = 'playlist-item';
+                if(window.activePlaylistFilter === id) { item.style.borderLeft = "4px solid var(--red-primary)"; }
                 item.innerHTML = `
                     <span style="flex:1; overflow:hidden; text-overflow:ellipsis;" onclick="filterViewByPlaylist('${id}', '${cleanName.replace(/'/g, "\\'")}')">🎵 ${cleanName}</span>
-                    <span onclick="deletePlaylist(event, '${id}')" style="color:var(--text-gray); padding: 0 4px;">❌</span>
+                    <span onclick="deletePlaylist(event, '${id}')" style="color:var(--text-gray);">❌</span>
                 `;
                 container.appendChild(item);
             });
@@ -1130,46 +1052,38 @@
         function filterViewByPlaylist(playlistId, playlistName) {
             window.activePlaylistFilter = playlistId;
             renderPlaylistsSidebar();
-
             document.getElementById('sideHomeBtn').classList.remove('active');
             document.getElementById('sideSearchBtn').classList.remove('active');
-            document.getElementById('pageMainTitle').innerText = "Playlist: " + (window.userPlaylists[playlistId]._customName || "Playlist");
-            document.getElementById('addSongsToPlaylistBtn').style.display = "flex"; 
-
+            document.getElementById('pageMainTitle').innerText = "Playlist: " + playlistName;
+            
+            // Attivazione corretta dei controlli specifici della playlist
+            document.getElementById('addSongsToPlaylistBtn').style.display = "flex";
+            document.getElementById('playlistShuffleBtn').style.display = "flex";
             renderHomeGrid();
         }
 
         function deletePlaylist(event, playlistId) {
             event.stopPropagation();
-            if(confirm("Eliminare questa playlist dalla cloud?")) {
-                delete window.userPlaylists[playlistId];
-                window.updatePlaylistOnCloud();
-                if(window.activePlaylistFilter === playlistId) {
-                    showHome();
-                } else {
-                    renderPlaylistsSidebar();
-                }
+            if(confirm("Eliminare la playlist?")) {
+                delete window.userPlaylists[playlistId]; window.updatePlaylistOnCloud();
+                if(window.activePlaylistFilter === playlistId) showHome(); else renderPlaylistsSidebar();
             }
         }
 
         function openSongsSelector() {
-            if (!window.activePlaylistFilter) return;
+            if (!window.activePlaylistFilter) return alert("Seleziona prima una playlist!");
             const modal = document.getElementById('songsSelectorModal');
             const container = document.getElementById('selectorTracksContainer');
             container.innerHTML = "";
-            const currentPlaylistTrackIds = window.userPlaylists[window.activePlaylistFilter];
+            const currentPlaylistTrackIds = window.userPlaylists[window.activePlaylistFilter] || [];
 
             window.allTracksData.forEach(track => {
                 const isAdded = currentPlaylistTrackIds.includes(track.id);
-                const item = document.createElement('div');
-                item.className = 'selector-item';
+                const item = document.createElement('div'); item.className = 'selector-item';
                 item.innerHTML = `
                     <div class="selector-info">
-                        <img src="${track.cover}" alt="Cover">
-                        <div>
-                            <h4>${track.title}</h4>
-                            <p>${track.artist}</p>
-                        </div>
+                        <img src="${track.cover}">
+                        <div><h4>${track.title}</h4><p>${track.artist}</p></div>
                     </div>
                     <button class="btn-add-action-trigger ${isAdded ? 'added' : ''}" onclick="toggleTrackInCurrentPlaylist('${track.id}', this)">
                         ${isAdded ? 'Inclusa ✓' : 'Aggiungi +'}
@@ -1182,33 +1096,26 @@
 
         function toggleTrackInCurrentPlaylist(trackId, buttonElement) {
             if (!window.activePlaylistFilter) return;
+            if(!window.userPlaylists[window.activePlaylistFilter]) window.userPlaylists[window.activePlaylistFilter] = [];
             const trackIds = window.userPlaylists[window.activePlaylistFilter];
             const index = trackIds.indexOf(trackId);
-
             if (index > -1) {
-                trackIds.splice(index, 1);
-                buttonElement.classList.remove('added');
-                buttonElement.innerText = "Aggiungi +";
+                trackIds.splice(index, 1); buttonElement.classList.remove('added'); buttonElement.innerText = "Aggiungi +";
             } else {
-                trackIds.push(trackId);
-                buttonElement.classList.add('added');
-                buttonElement.innerText = "Inclusa ✓";
+                trackIds.push(trackId); buttonElement.classList.add('added'); buttonElement.innerText = "Inclusa ✓";
             }
             window.updatePlaylistOnCloud();
         }
 
         function closeSongsSelector() {
-            document.getElementById('songsSelectorModal').classList.remove('active');
-            renderHomeGrid(); 
+            document.getElementById('songsSelectorModal').classList.remove('active'); renderHomeGrid(); 
         }
 
         function showHome() {
             window.activePlaylistFilter = null;
             document.getElementById('addSongsToPlaylistBtn').style.display = "none";
-            document.getElementById('songsSelectorModal').classList.remove('active');
-            exitDashboard();
-            renderPlaylistsSidebar();
-            
+            document.getElementById('playlistShuffleBtn').style.display = "none";
+            exitDashboard(); renderPlaylistsSidebar();
             document.getElementById('sideSearchBtn').classList.remove('active');
             document.getElementById('sideHomeBtn').classList.add('active');
             document.getElementById('searchWrapper').style.display = 'none';
@@ -1220,26 +1127,23 @@
         function activateSearchMode() {
             window.activePlaylistFilter = null;
             document.getElementById('addSongsToPlaylistBtn').style.display = "none";
+            document.getElementById('playlistShuffleBtn').style.display = "none";
             renderPlaylistsSidebar();
             document.getElementById('sideHomeBtn').classList.remove('active');
             document.getElementById('sideSearchBtn').classList.add('active');
             document.getElementById('searchWrapper').style.display = 'block';
-            document.getElementById('pageMainTitle').innerText = 'Cerca tra i tuoi brani';
+            document.getElementById('pageMainTitle').innerText = 'Cerca traccia audio';
             document.getElementById('searchInput').focus();
             renderHomeGrid();
         }
 
         function executeSearch() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const cards = document.querySelectorAll('.music-card');
-            cards.forEach(card => {
+            document.querySelectorAll('.music-card').forEach(card => {
                 const title = card.querySelector('h3').innerText.toLowerCase();
                 const artist = card.querySelector('p').innerText.toLowerCase();
-                if (title.includes(query) || artist.includes(query)) {
-                    card.classList.remove('hidden-search');
-                } else {
-                    card.classList.add('hidden-search');
-                }
+                if (title.includes(query) || artist.includes(query)) card.classList.remove('hidden-search');
+                else card.classList.add('hidden-search');
             });
         }
 
@@ -1247,23 +1151,19 @@
             document.getElementById('currentTitle').innerText = track.title;
             document.getElementById('currentArtist').innerText = track.artist;
             document.getElementById('currentCover').src = track.cover;
-            audioEngine.src = track.audio;
-            audioEngine.load();
-            audioEngine.play().then(() => {
-                masterPlayBtn.innerText = "⏸";
-            }).catch(() => { console.log("Errore stream audio."); });
+            audioEngine.src = track.audio; audioEngine.load();
+            audioEngine.play().then(() => { masterPlayBtn.innerText = "⏸"; }).catch(() => {});
         }
 
         function togglePlayback() {
-            if(!audioEngine.src) return alert("Scegli un brano dalla Home!");
+            if(!audioEngine.src) return alert("Scegli un brano!");
             if(audioEngine.paused) { audioEngine.play(); masterPlayBtn.innerText = "⏸"; } 
             else { audioEngine.pause(); masterPlayBtn.innerText = "▶"; }
         }
 
         audioEngine.ontimeupdate = () => {
             if(!isNaN(audioEngine.duration)) {
-                timeline.max = Math.floor(audioEngine.duration);
-                timeline.value = Math.floor(audioEngine.currentTime);
+                timeline.max = Math.floor(audioEngine.duration); timeline.value = Math.floor(audioEngine.currentTime);
                 timeCurrent.innerText = convertSecondsToMinutes(audioEngine.currentTime);
                 timeDuration.innerText = convertSecondsToMinutes(audioEngine.duration);
             }
@@ -1272,66 +1172,43 @@
         function changeTimelinePosition() { audioEngine.currentTime = timeline.value; }
         function adjustVolume() { audioEngine.volume = volumeControl.value; }
         function convertSecondsToMinutes(seconds) {
-            let mins = Math.floor(seconds / 60);
-            let secs = Math.floor(seconds % 60);
+            let mins = Math.floor(seconds / 60); let secs = Math.floor(seconds % 60);
             return mins + ":" + (secs < 10 ? "0" + secs : secs);
         }
 
         function exitDashboard() { document.getElementById('adminDashboard').classList.remove('active'); resetFormState(); }
 
         function syncAdminTracksList() {
-            const listContainer = document.getElementById('adminTracksList');
-            listContainer.innerHTML = ""; 
-            if(window.allTracksData.length === 0) {
-                listContainer.innerHTML = "<p style='color:var(--text-gray); font-size:14px;'>Nessun brano nel cloud.</p>";
-                return;
-            }
+            const listContainer = document.getElementById('adminTracksList'); listContainer.innerHTML = ""; 
             window.allTracksData.forEach(track => {
-                const item = document.createElement('div');
-                item.className = 'manage-track-item';
+                const item = document.createElement('div'); item.className = 'manage-track-item';
                 item.innerHTML = `
-                    <div class="manage-track-info">
-                        <img src="${track.cover}" alt="Cover">
-                        <div class="manage-track-meta">
-                            <h4>${track.title}</h4>
-                            <p>${track.artist}</p>
-                        </div>
-                    </div>
+                    <div class="manage-track-info"><img src="${track.cover}"><div><h4>${track.title}</h4><p>${track.artist}</p></div></div>
                     <div class="manage-actions">
                         <button type="button" class="btn-manage btn-edit-action" onclick="prepareEditTrack('${track.id}', '${track.title.replace(/'/g, "\\'")}', '${track.artist.replace(/'/g, "\\'")}', '${track.cover.replace(/'/g, "\\'")}', '${track.audio.replace(/'/g, "\\'")}')">Modifica</button>
                         <button type="button" class="btn-manage btn-delete-action" onclick="window.deleteTrack('${track.id}')">Elimina</button>
-                    </div>
-                `;
+                    </div>`;
                 listContainer.appendChild(item);
             });
         }
 
         function prepareEditTrack(id, title, artist, cover, audio) {
-            document.getElementById('editingTrackId').value = id;
-            document.getElementById('formTitle').value = title;
-            document.getElementById('formArtist').value = artist;
-            document.getElementById('formCover').value = cover;
-            document.getElementById('formAudio').value = audio;
-            document.getElementById('dashFormTitle').innerText = "Modifica Brano Corrente";
-            document.getElementById('formSubmitBtn').innerText = "Salva Modifiche";
-            document.getElementById('cancelEditBtn').style.display = "block";
+            document.getElementById('editingTrackId').value = id; document.getElementById('formTitle').value = title;
+            document.getElementById('formArtist').value = artist; document.getElementById('formCover').value = cover;
+            document.getElementById('formAudio').value = audio; document.getElementById('dashFormTitle').innerText = "Modifica Brano";
+            document.getElementById('formSubmitBtn').innerText = "Salva"; document.getElementById('cancelEditBtn').style.display = "block";
         }
 
         function resetFormState() {
-            document.getElementById('editingTrackId').value = "";
-            document.getElementById('formTitle').value = "";
-            document.getElementById('formArtist').value = "";
-            document.getElementById('formCover').value = "";
-            document.getElementById('formAudio').value = "";
-            document.getElementById('dashFormTitle').innerText = "Inserisci Nuovo Brano";
-            document.getElementById('formSubmitBtn').innerText = "Carica Brano in Home";
+            document.getElementById('editingTrackId').value = ""; document.getElementById('formTitle').value = "";
+            document.getElementById('formArtist').value = ""; document.getElementById('formCover').value = ""; document.getElementById('formAudio').value = "";
+            document.getElementById('dashFormTitle').innerText = "Inserisci Nuovo Brano"; document.getElementById('formSubmitBtn').innerText = "Carica Brano";
             document.getElementById('cancelEditBtn').style.display = "none";
         }
 
-        window.renderHomeGrid = renderHomeGrid;
-        window.renderPlaylistsSidebar = renderPlaylistsSidebar;
-        window.prepareEditTrack = prepareEditTrack;
-        window.toggleAuthPopup = toggleAuthPopup;
+        window.renderHomeGrid = renderHomeGrid; window.renderPlaylistsSidebar = renderPlaylistsSidebar;
+        window.prepareEditTrack = prepareEditTrack; window.toggleAuthPopup = toggleAuthPopup;
+        window.shuffleCurrentPlaylist = shuffleCurrentPlaylist;
     </script>
 </body>
 </html>

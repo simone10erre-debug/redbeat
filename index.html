@@ -752,12 +752,13 @@
                 <span>🔊</span>
                 <input type="range" id="volumeControl" class="range-slider" min="0" max="1" step="0.05" value="0.8" oninput="adjustVolume()">
             </div>
-            <button class="sub-btn" style="font-size: 18px;" onclick="openAdminDashboard()" title="Dashboard di Amministrazione">⚙️ Dashboard</button>
+            <button class="sub-btn" style="font-size: 18px;" onclick="openAdminGoogleLogin()" title="Dashboard di Amministrazione">⚙️ Dashboard</button>
         </div>
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
         // Configurazione Firebase Web App Ufficiale
@@ -773,12 +774,30 @@
 
         // Inizializzazione Core
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const rtdb = getDatabase(app);
+        const googleProvider = new GoogleAuthProvider();
 
-        // --- ACCESSO DIRETTO ALLA DASHBOARD SENZA BLOCCHI ---
-        function openAdminDashboard() {
-            syncAdminTracksList();
-            document.getElementById('adminDashboard').classList.add('active');
+        const ADMIN_EMAIL = "simone10erre@gmail.com";
+
+        // --- ACCESSO PROTETTO CON ACCESSO GOOGLE REALE ---
+        async function openAdminGoogleLogin() {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+
+                if(user.email === ADMIN_EMAIL) {
+                    alert("Autenticazione eseguita! Accesso amministratore confermato.");
+                    syncAdminTracksList();
+                    document.getElementById('adminDashboard').classList.add('active');
+                } else {
+                    alert("Accesso Negato. Questo account Google non ha i privilegi di amministrazione.");
+                    await signOut(auth);
+                }
+            } catch(error) {
+                console.error("Errore Google Login:", error);
+                alert("Finestra di login chiusa o errore di autenticazione.");
+            }
         }
 
         // --- ASCOLTO IN TEMPO REALE DEI BRANI DALLA HOME (REALTIME DB) ---
@@ -800,6 +819,10 @@
         // --- CRUD OPERAZIONI AMMINISTRATORE ---
         async function commitTrackForm(event) {
             event.preventDefault();
+            if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) {
+                return alert("Devi prima autenticarti come amministratore.");
+            }
+
             const targetId = document.getElementById('editingTrackId').value;
             const trackPayload = {
                 title: document.getElementById('formTitle').value.trim(),
@@ -823,6 +846,7 @@
         }
 
         async function deleteTrack(id) {
+            if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) return;
             if(confirm("Sei sicuro di voler eliminare questo brano dalla cloud home?")) {
                 try {
                     await remove(ref(rtdb, 'brani/' + id));
@@ -833,7 +857,7 @@
         }
 
         // Esponi le funzioni necessarie globalmente
-        window.openAdminDashboard = openAdminDashboard;
+        window.openAdminGoogleLogin = openAdminGoogleLogin;
         window.commitTrackForm = commitTrackForm;
         window.deleteTrack = deleteTrack;
     </script>

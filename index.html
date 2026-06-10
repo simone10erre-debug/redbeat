@@ -282,7 +282,7 @@
             width: 320px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
             position: relative;
         }
 
@@ -312,6 +312,23 @@
         .btn-auth:hover { background-color: var(--red-hover); }
         .btn-auth.secondary { background-color: #333; }
         .btn-auth.secondary:hover { background-color: #444; }
+        
+        .btn-google-auth {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .btn-google-auth:hover { background-color: #e6e6e6; }
 
         .close-popup-btn {
             position: absolute;
@@ -683,8 +700,12 @@
                 <h3>Accedi a Red Beat</h3>
                 <input type="email" id="authEmail" placeholder="Indirizzo Email">
                 <input type="password" id="authPassword" placeholder="Password (min. 6 caratteri)">
-                <button class="btn-auth" onclick="window.processUserLogin()">Accedi</button>
+                <button class="btn-auth" onclick="window.processUserLogin()">Accedi con Email</button>
                 <button class="btn-auth secondary" onclick="window.processUserRegistration()">Registrati</button>
+                <div style="text-align:center; margin: 5px 0; color:var(--text-gray); font-size:12px;">oppure</div>
+                <button class="btn-google-auth" onclick="window.processGoogleUserLogin()">
+                    <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" alt="Google" width="16"> Accedi con Google
+                </button>
             </div>
         </div>
 
@@ -803,7 +824,7 @@
                     iconEl.innerText = "⭐";
                     textEl.innerText = "Admin (Esci)";
                 } else {
-                    const iniziale = user.email.charAt(0).toUpperCase();
+                    const iniziale = user.email ? user.email.charAt(0).toUpperCase() : "U";
                     iconEl.innerText = "👤";
                     textEl.innerText = `${iniziale} (Esci)`;
                 }
@@ -828,7 +849,7 @@
             }
         });
 
-        // --- SISTEMA DI ACCESSO / REGISTRAZIONE UTENTE EMAIL E PASSWORD ---
+        // --- ACCESSO E REGISTRAZIONE STANDARD (EMAIL/PASSWORD) ---
         async function processUserRegistration() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
@@ -838,7 +859,7 @@
 
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                alert("Account creato con successo! Accesso eseguito automaticamente.");
+                alert("Account creato con successo! Accesso eseguito.");
                 toggleAuthPopup(false);
                 clearAuthInputs();
             } catch(error) {
@@ -860,7 +881,19 @@
                 clearAuthInputs();
             } catch(error) {
                 console.error("Errore Login:", error);
-                alert("Credenziali errate o account inesistente.");
+                alert("Credenziali errate o errore di connessione.");
+            }
+        }
+
+        // --- NUOVA FUNZIONE: ACCESSO CON GOOGLE PER TUTTI ---
+        async function processGoogleUserLogin() {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                alert("Accesso tramite Google eseguito con successo!");
+                toggleAuthPopup(false);
+            } catch(error) {
+                console.error("Errore Google Login Utente:", error);
+                alert("Impossibile completare l'accesso con Google.");
             }
         }
 
@@ -884,7 +917,7 @@
 
         // --- AGGIORNAMENTO PLAYLIST SUL CLOUD DATABASE ---
         async function updatePlaylistOnCloud() {
-            if(!auth.currentUser) return; // Se non loggato salva solo localmente
+            if(!auth.currentUser) return; 
             try {
                 await set(ref(rtdb, 'utenti_playlists/' + auth.currentUser.uid), window.userPlaylists);
             } catch(e) {
@@ -988,6 +1021,7 @@
         window.deleteTrack = deleteTrack;
         window.processUserRegistration = processUserRegistration;
         window.processUserLogin = processUserLogin;
+        window.processGoogleUserLogin = processGoogleUserLogin;
         window.handleAccountButtonClick = handleAccountButtonClick;
         window.updatePlaylistOnCloud = updatePlaylistOnCloud;
         window.getFirebaseUser = () => auth.currentUser;

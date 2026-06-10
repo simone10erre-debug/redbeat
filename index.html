@@ -149,19 +149,21 @@
             outline: none;
         }
 
-        /* Piccolo Tasto Account in Alto a Destra */
+        /* Tasto Account in Alto a Destra */
         .btn-user-account {
             background-color: var(--bg-card);
             color: white;
             border: 1px solid #333;
-            width: 40px;
+            padding: 0 12px;
             height: 40px;
-            border-radius: 50%;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: bold;
             transition: background-color 0.2s, border-color 0.2s;
             margin-left: auto;
         }
@@ -257,7 +259,7 @@
             margin-top: 4px;
         }
 
-        /* --- POPUP MODALE ACCOUNT (In alto a destra) --- */
+        /* --- POPUP MODALE ACCOUNT --- */
         .auth-popup-overlay {
             position: fixed;
             top: 0;
@@ -652,7 +654,9 @@
                 <div class="search-container" id="searchWrapper">
                     <input type="text" id="searchInput" placeholder="Cosa vuoi ascoltare? (Filtra per titolo o artista)" oninput="executeSearch()">
                 </div>
-                <button class="btn-user-account" onclick="toggleAuthPopup(true)" title="Accedi / Registrati">👤</button>
+                <button class="btn-user-account" id="accountMenuBtn" onclick="handleAccountButtonClick()">
+                    <span id="accountBtnIcon">👤</span> <span id="accountBtnText">Accedi</span>
+                </button>
             </div>
 
             <div class="header-playlist-view">
@@ -678,9 +682,9 @@
                 <button class="close-popup-btn" onclick="toggleAuthPopup(false)">×</button>
                 <h3>Accedi a Red Beat</h3>
                 <input type="email" id="authEmail" placeholder="Indirizzo Email">
-                <input type="password" id="authPassword" placeholder="Password">
-                <button class="btn-auth" onclick="alert('Sistema Account in fase di attivazione!')">Accedi</button>
-                <button class="btn-auth secondary" onclick="alert('Sistema Account in fase di attivazione!')">Registrati</button>
+                <input type="password" id="authPassword" placeholder="Password (min. 6 caratteri)">
+                <button class="btn-auth" onclick="window.processUserLogin()">Accedi</button>
+                <button class="btn-auth secondary" onclick="window.processUserRegistration()">Registrati</button>
             </div>
         </div>
 
@@ -758,10 +762,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
-        // Configurazione Firebase Con URL Database Europeo Specificato
+        // Configurazione Firebase Ufficiale con URL Europeo Specificato
         const firebaseConfig = {
             apiKey: "AIzaSyDai_-FplRtAI0fUXgfClBzrRprZFHL4OU",
             authDomain: "redbeat.firebaseapp.com",
@@ -780,8 +784,115 @@
         const googleProvider = new GoogleAuthProvider();
 
         const ADMIN_EMAIL = "simone10erre@gmail.com";
+        let playlistListenerRef = null;
 
-        // --- ACCESSO PROTETTO CON ACCESSO GOOGLE REALE ---
+        // --- GESTIONE DELLO STATO UTENTE IN TEMPO REALE (SESSIONE) ---
+        onAuthStateChanged(auth, (user) => {
+            const iconEl = document.getElementById('accountBtnIcon');
+            const textEl = document.getElementById('accountBtnText');
+            
+            // Stacca i vecchi ascoltatori di playlist se presenti
+            if(playlistListenerRef) {
+                playlistListenerRef();
+                playlistListenerRef = null;
+            }
+
+            if (user) {
+                // Utente autenticato
+                if(user.email === ADMIN_EMAIL) {
+                    iconEl.innerText = "⭐";
+                    textEl.innerText = "Admin (Esci)";
+                } else {
+                    const iniziale = user.email.charAt(0).toUpperCase();
+                    iconEl.innerText = "👤";
+                    textEl.innerText = `${iniziale} (Esci)`;
+                }
+                
+                // Sincronizza le playlist dell'utente dal cloud database
+                const userPlaylistPath = ref(rtdb, 'utenti_playlists/' + user.uid);
+                playlistListenerRef = onValue(userPlaylistPath, (snapshot) => {
+                    const data = snapshot.val();
+                    window.userPlaylists = data ? data : {};
+                    window.renderPlaylistsSidebar();
+                    window.renderHomeGrid();
+                });
+
+            } else {
+                // Nessun utente loggato
+                iconEl.innerText = "👤";
+                textEl.innerText = "Accedi";
+                window.userPlaylists = {};
+                window.activePlaylistFilter = null;
+                window.renderPlaylistsSidebar();
+                window.renderHomeGrid();
+            }
+        });
+
+        // --- SISTEMA DI ACCESSO / REGISTRAZIONE UTENTE EMAIL E PASSWORD ---
+        async function processUserRegistration() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+
+            if(!email || !password) return alert("Inserisci email e password per registrarti.");
+            if(password.length < 6) return alert("La password deve essere lunga almeno 6 caratteri.");
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                alert("Account creato con successo! Accesso eseguito automaticamente.");
+                toggleAuthPopup(false);
+                clearAuthInputs();
+            } catch(error) {
+                console.error("Errore Registrazione:", error);
+                alert("Impossibile registrarsi: " + error.message);
+            }
+        }
+
+        async function processUserLogin() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+
+            if(!email || !password) return alert("Inserisci sia l'email che la password per accedere.");
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                alert("Bentornato in Red Beat!");
+                toggleAuthPopup(false);
+                clearAuthInputs();
+            } catch(error) {
+                console.error("Errore Login:", error);
+                alert("Credenziali errate o account inesistente.");
+            }
+        }
+
+        function handleAccountButtonClick() {
+            if(auth.currentUser) {
+                if(confirm("Vuoi disconnetterti dal tuo account corrente?")) {
+                    signOut(auth).then(() => {
+                        alert("Disconnessione completata.");
+                        document.getElementById('adminDashboard').classList.remove('active');
+                    });
+                }
+            } else {
+                toggleAuthPopup(true);
+            }
+        }
+
+        function clearAuthInputs() {
+            document.getElementById('authEmail').value = "";
+            document.getElementById('authPassword').value = "";
+        }
+
+        // --- AGGIORNAMENTO PLAYLIST SUL CLOUD DATABASE ---
+        async function updatePlaylistOnCloud() {
+            if(!auth.currentUser) return; // Se non loggato salva solo localmente
+            try {
+                await set(ref(rtdb, 'utenti_playlists/' + auth.currentUser.uid), window.userPlaylists);
+            } catch(e) {
+                console.error("Errore sincronizzazione cloud playlist:", e);
+            }
+        }
+
+        // --- ACCESSO PROTETTO ADMIN CON ACCESSO GOOGLE REALE ---
         async function openAdminGoogleLogin() {
             try {
                 const result = await signInWithPopup(auth, googleProvider);
@@ -823,7 +934,7 @@
                 return alert("Errore: Non risulta nessun utente autenticato. Effettua nuovamente il login alla Dashboard.");
             }
             if(auth.currentUser.email !== ADMIN_EMAIL) {
-                return alert("Errore: L'account corrente (" + auth.currentUser.email + ") non ha i permessi amministratore.");
+                return alert("Errore: L'account corrente non ha i permessi amministratore.");
             }
 
             const title = document.getElementById('formTitle').value.trim();
@@ -875,6 +986,11 @@
         window.openAdminGoogleLogin = openAdminGoogleLogin;
         window.commitTrackForm = commitTrackForm;
         window.deleteTrack = deleteTrack;
+        window.processUserRegistration = processUserRegistration;
+        window.processUserLogin = processUserLogin;
+        window.handleAccountButtonClick = handleAccountButtonClick;
+        window.updatePlaylistOnCloud = updatePlaylistOnCloud;
+        window.getFirebaseUser = () => auth.currentUser;
     </script>
 
     <script>
@@ -892,7 +1008,6 @@
         audioEngine.volume = 0.8;
         audioEngine.onended = () => { playRandomTrack(); };
 
-        // Mostra/Nasconde il Popup dell'Account
         function toggleAuthPopup(show) {
             const popup = document.getElementById('authPopup');
             if(show) popup.classList.add('active');
@@ -941,11 +1056,17 @@
         }
 
         function createNewPlaylist() {
+            if(!window.getFirebaseUser()) {
+                return alert("Devi effettuare l'accesso per creare e salvare le tue playlist!");
+            }
             const name = prompt("Inserisci il nome della tua Playlist:");
             if (!name || name.trim() === "") return;
             
             const playlistId = "pl_" + Date.now();
             window.userPlaylists[playlistId] = []; 
+            window.userPlaylists[playlistId]._customName = name.trim();
+            
+            window.updatePlaylistOnCloud();
             filterViewByPlaylist(playlistId, name.trim());
         }
 
@@ -974,15 +1095,11 @@
 
         function filterViewByPlaylist(playlistId, playlistName) {
             window.activePlaylistFilter = playlistId;
-            if(!window.userPlaylists[playlistId]._customName) {
-                window.userPlaylists[playlistId]._customName = playlistName;
-            }
-            
             renderPlaylistsSidebar();
 
             document.getElementById('sideHomeBtn').classList.remove('active');
             document.getElementById('sideSearchBtn').classList.remove('active');
-            document.getElementById('pageMainTitle').innerText = "Playlist: " + window.userPlaylists[playlistId]._customName;
+            document.getElementById('pageMainTitle').innerText = "Playlist: " + (window.userPlaylists[playlistId]._customName || "Playlist");
             document.getElementById('addSongsToPlaylistBtn').style.display = "flex"; 
 
             renderHomeGrid();
@@ -990,8 +1107,9 @@
 
         function deletePlaylist(event, playlistId) {
             event.stopPropagation();
-            if(confirm("Eliminare questa playlist? I brani rimarranno salvati sul lettore.")) {
+            if(confirm("Eliminare questa playlist dalla cloud?")) {
                 delete window.userPlaylists[playlistId];
+                window.updatePlaylistOnCloud();
                 if(window.activePlaylistFilter === playlistId) {
                     showHome();
                 } else {
@@ -1042,6 +1160,7 @@
                 buttonElement.classList.add('added');
                 buttonElement.innerText = "Inclusa ✓";
             }
+            window.updatePlaylistOnCloud();
         }
 
         function closeSongsSelector() {

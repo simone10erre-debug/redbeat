@@ -722,27 +722,27 @@
         const ADMIN_EMAIL = "simone10erre@gmail.com";
         let currentLoggedUser = null;
 
-        // --- AUTENTICAZIONE AMMINISTRATORE CON GOOGLE ---
+        // --- AUTENTICAZIONE AMMINISTRATORE REALE CON GOOGLE ---
         async function openAdminGoogleLogin() {
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
 
                 if(user.email === ADMIN_EMAIL) {
-                    alert("Benvenuto Simone! Accesso alla Dashboard sbloccato.");
+                    alert("Benvenuto Simone! Accesso alla Dashboard sbloccato con il tuo account Google.");
                     syncAdminTracksList();
                     document.getElementById('adminDashboard').classList.add('active');
                 } else {
-                    alert("Accesso Negato. Solo l'account amministratore può accedere qui.");
+                    alert("Accesso Negato. Solo l'indirizzo email simone10erre@gmail.com può amministrare la piattaforma.");
                     await signOut(auth);
                 }
             } catch(error) {
                 console.error("Errore autenticazione Google:", error);
-                alert("Impossibile completare l'accesso con Google.");
+                alert("Impossibile completare l'accesso sicuro con Google.");
             }
         }
 
-        // --- SISTEMA ACCOUNT COGNITIVO UTENTI (EMAIL/PASSWORD) ---
+        // --- SISTEMA ACCOUNT UTENTI (EMAIL/PASSWORD) ---
         async function handleMailRegister() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value.trim();
@@ -820,7 +820,6 @@
                 Object.keys(data).forEach(key => {
                     window.allTracksData.push({ id: key, ...data[key] });
                 });
-                // Ordina per timestamp decrescente (ultimi aggiunti prima)
                 window.allTracksData.sort((a,b) => b.timestamp - a.timestamp);
             }
             window.renderHomeGrid();
@@ -832,7 +831,7 @@
         // --- CRUD OPERAZIONI AMMINISTRATORE ---
         async function commitTrackForm(event) {
             event.preventDefault();
-            if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) return alert("Azione non autorizzata.");
+            if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) return alert("Azione non autorizzata. Esegui prima l'accesso amministratore con Google.");
 
             const targetId = document.getElementById('editingTrackId').value;
             const trackPayload = {

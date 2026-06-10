@@ -761,10 +761,11 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
-        // Configurazione Firebase Web App Ufficiale
+        // Configurazione Firebase Con URL Database Europeo Specificato
         const firebaseConfig = {
             apiKey: "AIzaSyDai_-FplRtAI0fUXgfClBzrRprZFHL4OU",
             authDomain: "redbeat.firebaseapp.com",
+            databaseURL: "https://redbeat-default-rtdb.europe-west1.firebasedatabase.app/",
             projectId: "redbeat",
             storageBucket: "redbeat.firebasestorage.app",
             messagingSenderId: "951595303453",

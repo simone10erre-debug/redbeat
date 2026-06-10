@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Beat - Professional Player</title>
+    <title>Red Beat - Professional Player & Admin</title>
     <style>
         :root {
             --bg-dark: #090909;
@@ -76,10 +76,86 @@
             color: var(--text-white);
         }
 
-        /* Contenitore Barra di Ricerca Integrata */
+        /* Sezione Autenticazione Utente */
+        .auth-sidebar-box {
+            background-color: var(--bg-card);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border: 1px solid #282828;
+        }
+
+        .auth-sidebar-box input {
+            width: 100%;
+            padding: 6px 10px;
+            background-color: #000;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .btn-auth {
+            background-color: var(--red-primary);
+            color: white;
+            border: none;
+            padding: 6px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-auth.secondary { background-color: #333; }
+
+        /* Sezione Playlist nella Sidebar */
+        .playlist-sidebar-section {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-create-playlist {
+            background-color: #222;
+            color: white;
+            border: 1px dashed #444;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-create-playlist:hover { background-color: #333; border-color: var(--red-primary); }
+
+        .playlists-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .playlist-item {
+            padding: 10px;
+            background-color: #141414;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        .playlist-item:hover { background-color: var(--bg-hover); }
+
+        /* Barra di Ricerca */
         .search-container {
             margin-bottom: 25px;
-            display: none; /* Gestito via JS */
+            display: none;
             max-width: 400px;
         }
 
@@ -104,12 +180,39 @@
             background: linear-gradient(to bottom, #3a0608 0%, var(--bg-main) 40%);
             padding: 30px;
             overflow-y: auto;
+            position: relative;
+        }
+
+        .header-playlist-view {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 22px;
-            margin-bottom: 20px;
+            font-size: 24px;
             font-weight: 700;
+        }
+
+        .btn-add-songs-to-pl {
+            background-color: var(--red-primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        .btn-add-songs-to-pl:hover {
+            transform: scale(1.1);
+            background-color: var(--red-hover);
         }
 
         /* Griglia Card */
@@ -127,11 +230,6 @@
             width: 180px;
             cursor: pointer;
             transition: background-color 0.3s;
-        }
-
-        /* Classe di utility per la ricerca */
-        .music-card.matched-search {
-            display: block;
         }
 
         .music-card.hidden-search {
@@ -161,6 +259,66 @@
             font-size: 13px;
             color: var(--text-gray);
             margin-top: 4px;
+        }
+
+        /* --- OVERLAY SELEZIONE BRANI PER PLAYLIST --- */
+        .songs-selector-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(18, 18, 18, 0.98);
+            z-index: 80;
+            padding: 40px;
+            overflow-y: auto;
+            display: none;
+        }
+        .songs-selector-overlay.active { display: block; }
+
+        .selector-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+            max-width: 600px;
+        }
+
+        .selector-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background-color: var(--bg-card);
+            border-radius: 6px;
+            border: 1px solid #282828;
+        }
+
+        .selector-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .selector-info img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .btn-add-action-trigger {
+            background-color: #222;
+            color: white;
+            border: 1px solid #444;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .btn-add-action-trigger.added {
+            background-color: #2e7d32;
+            border-color: #2e7d32;
         }
 
         /* --- CONTROLLI PLAYER INFERIORE --- */
@@ -275,70 +433,7 @@
             width: 30%;
         }
 
-        /* --- BLOCCO DI PROTEZIONE: SCHERMATA LOGIN PIN --- */
-        .secure-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.95);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .secure-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .pin-box {
-            background-color: var(--bg-card);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid #333;
-            text-align: center;
-            width: 320px;
-        }
-
-        .pin-display {
-            background-color: #000;
-            padding: 15px;
-            font-size: 24px;
-            letter-spacing: 6px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            color: var(--red-primary);
-            height: 58px;
-        }
-
-        .pin-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .pin-btn {
-            background-color: var(--bg-hover);
-            border: none;
-            color: white;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .pin-btn:hover { background-color: #404040; }
-        .pin-btn.clear { background-color: #3a0608; color: var(--red-primary); }
-
-        /* --- DASHBOARD SEPARATA COMPLETA --- */
+        /* --- DASHBOARD SEPARATA --- */
         .management-dashboard {
             position: absolute;
             top: 0;
@@ -368,6 +463,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            height: fit-content;
         }
 
         .form-row {
@@ -405,6 +501,70 @@
         }
 
         .btn-submit-track:hover { background-color: var(--red-hover); }
+
+        .manage-tracks-container {
+            background-color: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .manage-track-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #282828;
+            gap: 10px;
+        }
+
+        .manage-track-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .manage-track-info img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .manage-track-meta h4 {
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .manage-track-meta p {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        .manage-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-manage {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .btn-edit-action { background-color: #333; }
+        .btn-edit-action:hover { background-color: #444; }
+        .btn-delete-action { background-color: var(--red-primary); }
+        .btn-delete-action:hover { background-color: var(--red-hover); }
     </style>
 </head>
 <body>
@@ -417,6 +577,26 @@
             <div class="logo" onclick="showHome()">Red<span>Beat</span></div>
             <div class="nav-link active" id="sideHomeBtn" onclick="showHome()">🏠 Home</div>
             <div class="nav-link" id="sideSearchBtn" onclick="activateSearchMode()">🔍 Cerca</div>
+            
+            <div class="auth-sidebar-box" id="authBox">
+                <span id="authStatusText" style="font-weight: bold; color: var(--text-gray);">Sincronizza Playlist Cloud</span>
+                <div id="authInputs">
+                    <input type="email" id="authEmail" placeholder="Email">
+                    <input type="password" id="authPassword" placeholder="Password">
+                    <button class="btn-auth" onclick="handleMailLogin()">Accedi</button>
+                    <button class="btn-auth secondary" onclick="handleMailRegister()">Registrati</button>
+                </div>
+                <div id="authLogged" style="display: none; flex-direction: column; gap: 6px;">
+                    <span id="userDisplayMail" style="word-break: break-all; color: #4caf50;"></span>
+                    <button class="btn-auth secondary" onclick="handleLogout()">Esci</button>
+                </div>
+            </div>
+
+            <div class="playlist-sidebar-section">
+                <button class="btn-create-playlist" onclick="createNewPlaylist()">➕ Crea Playlist</button>
+                <div class="playlists-list" id="playlistsContainer">
+                    </div>
+            </div>
         </aside>
 
         <main class="main-content" id="mainHomeView">
@@ -425,54 +605,37 @@
                 <input type="text" id="searchInput" placeholder="Cosa vuoi ascoltare? (Filtra per titolo o artista)" oninput="executeSearch()">
             </div>
 
-            <div class="section-title" id="pageMainTitle">Brani Consigliati</div>
+            <div class="header-playlist-view">
+                <div class="section-title" id="pageMainTitle">Brani Consigliati</div>
+                <button class="btn-add-songs-to-pl" id="addSongsToPlaylistBtn" style="display: none;" onclick="openSongsSelector()" title="Aggiungi brani a questa playlist">+</button>
+            </div>
             
             <div class="grid-container" id="dynamicGrid">
-                <div class="music-card" onclick="streamTrack('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 'Acoustic Symphony', 'Red Beat Lab', 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500')">
-                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500" alt="Cover">
-                    <h3>Acoustic Symphony</h3>
-                    <p>Red Beat Lab</p>
                 </div>
-                <div class="music-card" onclick="streamTrack('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', 'Cybernetic Dream', 'Synth Wave', 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500')">
-                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500" alt="Cover">
-                    <h3>Cybernetic Dream</h3>
-                    <p>Synth Wave</p>
+
+            <div class="songs-selector-overlay" id="songsSelectorModal">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Scegli i brani della Home da aggiungere</h2>
+                    <button class="sub-btn" style="background:#222; padding:8px 16px; border-radius:20px; color:white;" onclick="closeSongsSelector()">Fatto ✓</button>
                 </div>
+                <div class="selector-list" id="selectorTracksContainer">
+                    </div>
             </div>
         </main>
 
-        <div class="secure-overlay" id="pinGate">
-            <div class="pin-box">
-                <h3 style="margin-bottom: 15px;">Accesso Riservato</h3>
-                <div class="pin-display" id="pinDisplay"></div>
-                <div class="pin-grid">
-                    <button class="pin-btn" onclick="pressKey('1')">1</button>
-                    <button class="pin-btn" onclick="pressKey('2')">2</button>
-                    <button class="pin-btn" onclick="pressKey('3')">3</button>
-                    <button class="pin-btn" onclick="pressKey('4')">4</button>
-                    <button class="pin-btn" onclick="pressKey('5')">5</button>
-                    <button class="pin-btn" onclick="pressKey('6')">6</button>
-                    <button class="pin-btn" onclick="pressKey('7')">7</button>
-                    <button class="pin-btn" onclick="pressKey('8')">8</button>
-                    <button class="pin-btn" onclick="pressKey('9')">9</button>
-                    <button class="pin-btn clear" onclick="clearPin()">C</button>
-                    <button class="pin-btn" onclick="pressKey('0')">0</button>
-                    <button class="pin-btn" style="background-color: #444;" onclick="abortAccess()">❌</button>
-                </div>
-            </div>
-        </div>
-
         <div class="management-dashboard" id="adminDashboard">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>Pannello di Controllo Canzoni</h2>
-                <button class="sub-btn" style="background: var(--bg-hover); padding: 10px 20px; border-radius: 20px; color: white;" onclick="exitDashboard()">← Esci dal Pannello</button>
+                <h2 id="dashFormTitle">Inserisci Nuovo Brano</h2>
+                <button class="sub-btn" style="background: var(--bg-hover); padding: 10px 20px; border-radius: 20px; color: white;" onclick="exitDashboard()">← Torna al Player</button>
             </div>
 
             <div class="dash-layout">
-                <form class="input-form" onsubmit="commitNewTrack(event)">
+                <form class="input-form" onsubmit="commitTrackForm(event)">
+                    <input type="hidden" id="editingTrackId" value="">
+                    
                     <div class="form-row">
                         <label>Titolo del Brano</label>
-                        <input type="text" id="formTitle" placeholder="Es. Starboy" required>
+                        <input type="text" id="formTitle" placeholder="Es. Blinding Lights" required>
                     </div>
                     <div class="form-row">
                         <label>Artista / Gruppo</label>
@@ -480,21 +643,19 @@
                     </div>
                     <div class="form-row">
                         <label>URL Immagine Copertina</label>
-                        <input type="url" id="formCover" placeholder="Incolla link della foto (.jpg/.png)" required>
+                        <input type="url" id="formCover" placeholder="Incolla link (.jpg / .png)" required>
                     </div>
                     <div class="form-row">
                         <label>URL Traccia Audio (.mp3)</label>
-                        <input type="url" id="formAudio" placeholder="Incolla link diretto del file audio" required>
+                        <input type="url" id="formAudio" placeholder="Incolla link file audio online" required>
                     </div>
-                    <button type="submit" class="btn-submit-track">Carica Brano in Home</button>
+                    <button type="submit" class="btn-submit-track" id="formSubmitBtn">Carica Brano in Home</button>
+                    <button type="button" class="btn-submit-track" id="cancelEditBtn" style="background-color:#444; display:none;" onclick="resetFormState()">Annulla Modifica</button>
                 </form>
 
-                <div style="background-color: rgba(225,9,20,0.03); border: 1px dashed var(--red-primary); padding: 30px; border-radius: 8px;">
-                    <h3>Gestore Caricamenti</h3>
-                    <p style="color: var(--text-gray); margin-top: 15px; font-size: 14px; line-height: 1.6;">
-                        Ogni traccia salvata verrà inserita istantaneamente all'inizio della griglia musicale nella schermata principale (Home).<br><br>
-                        Assicurati che l'indirizzo della traccia audio sia un indirizzo web diretto che termina preferibilmente in .mp3 affinché il lettore possa decodificarlo.
-                    </p>
+                <div class="manage-tracks-container">
+                    <h3 style="margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid #333;">Gestione Brani Esistenti</h3>
+                    <div id="adminTracksList"></div>
                 </div>
             </div>
         </div>
@@ -512,11 +673,11 @@
 
         <div class="player-center">
             <div class="playback-buttons">
-                <button class="sub-btn" onclick="alert('Riproduzione casuale non configurata')">🔀</button>
-                <button class="sub-btn" onclick="alert('Traccia Precedente')">⏮</button>
+                <button class="sub-btn" onclick="alert('Autoplay Casuale attivo alla fine dei brani!')">🔀</button>
+                <button class="sub-btn" onclick="playRandomTrack()">⏮</button>
                 <button class="btn-round-play" id="masterPlayBtn" onclick="togglePlayback()">▶</button>
-                <button class="sub-btn" onclick="alert('Prossima Traccia')">⏭</button>
-                <button class="sub-btn" onclick="alert('Ripetizione singola disattivata')">🔁</button>
+                <button class="sub-btn" onclick="playRandomTrack()">⏭</button>
+                <button class="sub-btn" onclick="alert('Ripetizione disattivata')">🔁</button>
             </div>
             <div class="timeline-block">
                 <span id="timeCurrent">0:00</span>
@@ -530,12 +691,193 @@
                 <span>🔊</span>
                 <input type="range" id="volumeControl" class="range-slider" min="0" max="1" step="0.05" value="0.8" oninput="adjustVolume()">
             </div>
-            <button class="sub-btn" style="font-size: 18px;" onclick="openPinGate()" title="Dashboard di Amministrazione">⚙️ Dashboard</button>
+            <button class="sub-btn" style="font-size: 18px;" onclick="openAdminGoogleLogin()" title="Dashboard di Amministrazione">⚙️ Dashboard</button>
         </div>
     </footer>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+        // Configurazione Firebase Web App Ufficiale
+        const firebaseConfig = {
+            apiKey: "AIzaSyDai_-FplRtAI0fUXgfClBzrRprZFHL4OU",
+            authDomain: "redbeat.firebaseapp.com",
+            projectId: "redbeat",
+            storageBucket: "redbeat.firebasestorage.app",
+            messagingSenderId: "951595303453",
+            appId: "1:951595303453:web:23e2f3829dd51ba1707cf4",
+            measurementId: "G-YF6YXL7Y9D"
+        };
+
+        // Inizializzazione Core
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const rtdb = getDatabase(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        const ADMIN_EMAIL = "simone10erre@gmail.com";
+        let currentLoggedUser = null;
+
+        // --- AUTENTICAZIONE AMMINISTRATORE CON GOOGLE ---
+        async function openAdminGoogleLogin() {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+
+                if(user.email === ADMIN_EMAIL) {
+                    alert("Benvenuto Simone! Accesso alla Dashboard sbloccato.");
+                    syncAdminTracksList();
+                    document.getElementById('adminDashboard').classList.add('active');
+                } else {
+                    alert("Accesso Negato. Solo l'account amministratore può accedere qui.");
+                    await signOut(auth);
+                }
+            } catch(error) {
+                console.error("Errore autenticazione Google:", error);
+                alert("Impossibile completare l'accesso con Google.");
+            }
+        }
+
+        // --- SISTEMA ACCOUNT COGNITIVO UTENTI (EMAIL/PASSWORD) ---
+        async function handleMailRegister() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+            if(!email || !password) return alert("Inserisci credenziali valide!");
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                alert("Account Creato! Le tue playlist si sincronizzeranno su tutti i dispositivi.");
+            } catch(e) { alert("Errore: " + e.message); }
+        }
+
+        async function handleMailLogin() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+            if(!email || !password) return alert("Inserisci email e password!");
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                alert("Accesso eseguito con successo!");
+            } catch(e) { alert("Errore di login: " + e.message); }
+        }
+
+        async function handleLogout() {
+            if(confirm("Vuoi disconnetterti?")) {
+                await signOut(auth);
+                window.location.reload();
+            }
+        }
+
+        // Tracciamento stato utente cloud
+        onAuthStateChanged(auth, (user) => {
+            const inputs = document.getElementById('authInputs');
+            const logged = document.getElementById('authLogged');
+            const statusText = document.getElementById('authStatusText');
+            const displayMail = document.getElementById('userDisplayMail');
+
+            if(user) {
+                currentLoggedUser = user;
+                inputs.style.display = "none";
+                logged.style.display = "flex";
+                statusText.innerText = "Sincronizzazione Attiva ☁️";
+                displayMail.innerText = user.email;
+
+                // Recupera Playlist dal Realtime Database
+                onValue(ref(rtdb, 'playlists/' + user.uid), (snapshot) => {
+                    const data = snapshot.val();
+                    window.userPlaylists = data ? data : {};
+                    window.renderPlaylistsSidebar();
+                });
+            } else {
+                currentLoggedUser = null;
+                inputs.style.display = "flex";
+                logged.style.display = "none";
+                statusText.innerText = "Sincronizza Playlist Cloud";
+                window.userPlaylists = {};
+                window.renderPlaylistsSidebar();
+            }
+        });
+
+        // Sincronizza lo stato delle playlist sul Realtime Database
+        async function syncPlaylistsToCloud() {
+            if(!currentLoggedUser) return; 
+            try {
+                await set(ref(rtdb, 'playlists/' + currentLoggedUser.uid), window.userPlaylists);
+            } catch (e) {
+                console.error("Errore salvataggio playlist: ", e);
+            }
+        }
+
+        // --- ASCOLTO IN TEMPO REALE DEI BRANI DALLA HOME (REALTIME DB) ---
+        onValue(ref(rtdb, 'brani'), (snapshot) => {
+            window.allTracksData = [];
+            const data = snapshot.val();
+            if(data) {
+                Object.keys(data).forEach(key => {
+                    window.allTracksData.push({ id: key, ...data[key] });
+                });
+                // Ordina per timestamp decrescente (ultimi aggiunti prima)
+                window.allTracksData.sort((a,b) => b.timestamp - a.timestamp);
+            }
+            window.renderHomeGrid();
+            if(document.getElementById('adminDashboard').classList.contains('active')) {
+                syncAdminTracksList();
+            }
+        });
+
+        // --- CRUD OPERAZIONI AMMINISTRATORE ---
+        async function commitTrackForm(event) {
+            event.preventDefault();
+            if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) return alert("Azione non autorizzata.");
+
+            const targetId = document.getElementById('editingTrackId').value;
+            const trackPayload = {
+                title: document.getElementById('formTitle').value.trim(),
+                artist: document.getElementById('formArtist').value.trim(),
+                cover: document.getElementById('formCover').value.trim(),
+                audio: document.getElementById('formAudio').value.trim(),
+                timestamp: Date.now()
+            };
+
+            try {
+                if(targetId === "") {
+                    const newTrackRef = push(ref(rtdb, 'brani'));
+                    await set(newTrackRef, trackPayload);
+                    alert("Nuovo brano pubblicato sul cloud per tutti!");
+                } else {
+                    await set(ref(rtdb, 'brani/' + targetId), trackPayload);
+                    alert("Brano modificato sul cloud!");
+                }
+                resetFormState();
+            } catch(e) { alert("Errore di scrittura: " + e.message); }
+        }
+
+        async function deleteTrack(id) {
+            if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) return;
+            if(confirm("Sei sicuro di voler eliminare questo brano dalla cloud home di tutti?")) {
+                try {
+                    await remove(ref(rtdb, 'brani/' + id));
+                    alert("Traccia eliminata!");
+                    resetFormState();
+                } catch(e) { alert("Impossibile eliminare: " + e.message); }
+            }
+        }
+
+        // Esponi le funzioni necessarie globalmente
+        window.openAdminGoogleLogin = openAdminGoogleLogin;
+        window.handleMailRegister = handleMailRegister;
+        window.handleMailLogin = handleMailLogin;
+        window.handleLogout = handleLogout;
+        window.commitTrackForm = commitTrackForm;
+        window.deleteTrack = deleteTrack;
+        window.syncPlaylistsToCloud = syncPlaylistsToCloud;
+    </script>
+
     <script>
-        // --- INIZIALIZZAZIONE VARIABILI DI SISTEMA ---
         const audioEngine = document.getElementById('audioEngine');
         const masterPlayBtn = document.getElementById('masterPlayBtn');
         const timeline = document.getElementById('timeline');
@@ -543,47 +885,199 @@
         const timeDuration = document.getElementById('timeDuration');
         const volumeControl = document.getElementById('volumeControl');
         
-        let currentPinInput = "";
-        const TARGET_PIN = "160710";
+        window.userPlaylists = {}; 
+        window.activePlaylistFilter = null;
+        window.allTracksData = []; 
 
         audioEngine.volume = 0.8;
+        audioEngine.onended = () => { playRandomTrack(); };
 
-        // --- ATTIVAZIONE E GESTIONE MODALITÀ RICERCA ---
-        function activateSearchMode() {
-            document.getElementById('sideHomeBtn').classList.remove('active');
-            document.getElementById('sideSearchBtn').classList.add('active');
+        function playRandomTrack() {
+            let pool = [];
+            if (window.activePlaylistFilter && window.userPlaylists[window.activePlaylistFilter]) {
+                const allowedIds = window.userPlaylists[window.activePlaylistFilter];
+                pool = window.allTracksData.filter(t => allowedIds.includes(t.id));
+            } else {
+                pool = window.allTracksData;
+            }
+            if (pool.length > 0) {
+                const randomTrack = pool[Math.floor(Math.random() * pool.length)];
+                streamTrackData(randomTrack);
+            }
+        }
+
+        function renderHomeGrid() {
+            const grid = document.getElementById('dynamicGrid');
+            grid.innerHTML = "";
+            let tracksToRender = window.allTracksData;
             
-            document.getElementById('searchWrapper').style.display = 'block';
-            document.getElementById('pageMainTitle').innerText = 'Cerca tra i tuoi brani';
-            document.getElementById('searchInput').focus();
+            if (window.activePlaylistFilter && window.userPlaylists[window.activePlaylistFilter]) {
+                const allowedIds = window.userPlaylists[window.activePlaylistFilter];
+                tracksToRender = window.allTracksData.filter(t => allowedIds.includes(t.id));
+            }
+
+            if(tracksToRender.length === 0) {
+                grid.innerHTML = "<p style='color:var(--text-gray); padding:10px;'>Nessun brano disponibile in questa sezione.</p>";
+            }
+
+            tracksToRender.forEach(track => {
+                const card = document.createElement('div');
+                card.className = 'music-card';
+                card.onclick = () => streamTrackData(track);
+                card.innerHTML = `
+                    <img src="${track.cover}" alt="Cover">
+                    <h3>${track.title}</h3>
+                    <p>${track.artist}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function createNewPlaylist() {
+            const name = prompt("Inserisci il nome della tua Playlist:");
+            if (!name || name.trim() === "") return;
+            
+            const playlistId = "pl_" + Date.now();
+            window.userPlaylists[playlistId] = []; 
+            filterViewByPlaylist(playlistId, name.trim());
+        }
+
+        function renderPlaylistsSidebar() {
+            const container = document.getElementById('playlistsContainer');
+            container.innerHTML = "";
+
+            Object.keys(window.userPlaylists).forEach(id => {
+                if(id.startsWith('_')) return; 
+                const cleanName = window.userPlaylists[id]._customName || "Playlist";
+                
+                const item = document.createElement('div');
+                item.className = 'playlist-item';
+                if(window.activePlaylistFilter === id) {
+                    item.style.backgroundColor = "var(--bg-hover)";
+                    item.style.borderLeft = "4px solid var(--red-primary)";
+                }
+                
+                item.innerHTML = `
+                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis;" onclick="filterViewByPlaylist('${id}', '${cleanName.replace(/'/g, "\\'")}')">🎵 ${cleanName}</span>
+                    <span onclick="deletePlaylist(event, '${id}')" style="color:var(--text-gray); padding: 0 4px;">❌</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function filterViewByPlaylist(playlistId, playlistName) {
+            window.activePlaylistFilter = playlistId;
+            if(!window.userPlaylists[playlistId]._customName) {
+                window.userPlaylists[playlistId]._customName = playlistName;
+            }
+            
+            renderPlaylistsSidebar();
+            if(window.syncPlaylistsToCloud) window.syncPlaylistsToCloud();
+
+            document.getElementById('sideHomeBtn').classList.remove('active');
+            document.getElementById('sideSearchBtn').classList.remove('active');
+            document.getElementById('pageMainTitle').innerText = "Playlist: " + window.userPlaylists[playlistId]._customName;
+            document.getElementById('addSongsToPlaylistBtn').style.display = "flex"; 
+
+            renderHomeGrid();
+        }
+
+        function deletePlaylist(event, playlistId) {
+            event.stopPropagation();
+            if(confirm("Eliminare questa playlist? I brani rimarranno salvati sul lettore.")) {
+                delete window.userPlaylists[playlistId];
+                if(window.syncPlaylistsToCloud) window.syncPlaylistsToCloud();
+                if(window.activePlaylistFilter === playlistId) {
+                    showHome();
+                } else {
+                    renderPlaylistsSidebar();
+                }
+            }
+        }
+
+        function openSongsSelector() {
+            if (!window.activePlaylistFilter) return;
+            const modal = document.getElementById('songsSelectorModal');
+            const container = document.getElementById('selectorTracksContainer');
+            container.innerHTML = "";
+            const currentPlaylistTrackIds = window.userPlaylists[window.activePlaylistFilter];
+
+            window.allTracksData.forEach(track => {
+                const isAdded = currentPlaylistTrackIds.includes(track.id);
+                const item = document.createElement('div');
+                item.className = 'selector-item';
+                item.innerHTML = `
+                    <div class="selector-info">
+                        <img src="${track.cover}" alt="Cover">
+                        <div>
+                            <h4>${track.title}</h4>
+                            <p>${track.artist}</p>
+                        </div>
+                    </div>
+                    <button class="btn-add-action-trigger ${isAdded ? 'added' : ''}" onclick="toggleTrackInCurrentPlaylist('${track.id}', this)">
+                        ${isAdded ? 'Inclusa ✓' : 'Aggiungi +'}
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+            modal.classList.add('active');
+        }
+
+        function toggleTrackInCurrentPlaylist(trackId, buttonElement) {
+            if (!window.activePlaylistFilter) return;
+            const trackIds = window.userPlaylists[window.activePlaylistFilter];
+            const index = trackIds.indexOf(trackId);
+
+            if (index > -1) {
+                trackIds.splice(index, 1);
+                buttonElement.classList.remove('added');
+                buttonElement.innerText = "Aggiungi +";
+            } else {
+                trackIds.push(trackId);
+                buttonElement.classList.add('added');
+                buttonElement.innerText = "Inclusa ✓";
+            }
+            if(window.syncPlaylistsToCloud) window.syncPlaylistsToCloud();
+        }
+
+        function closeSongsSelector() {
+            document.getElementById('songsSelectorModal').classList.remove('active');
+            renderHomeGrid(); 
         }
 
         function showHome() {
+            window.activePlaylistFilter = null;
+            document.getElementById('addSongsToPlaylistBtn').style.display = "none";
+            document.getElementById('songsSelectorModal').classList.remove('active');
             exitDashboard();
-            abortAccess();
+            renderPlaylistsSidebar();
             
             document.getElementById('sideSearchBtn').classList.remove('active');
             document.getElementById('sideHomeBtn').classList.add('active');
-            
             document.getElementById('searchWrapper').style.display = 'none';
             document.getElementById('searchInput').value = '';
             document.getElementById('pageMainTitle').innerText = 'Brani Consigliati';
-            
-            // Ripristina la visibilità di tutte le card
-            const cards = document.querySelectorAll('.music-card');
-            cards.forEach(card => {
-                card.classList.remove('hidden-search');
-            });
+            renderHomeGrid();
+        }
+
+        function activateSearchMode() {
+            window.activePlaylistFilter = null;
+            document.getElementById('addSongsToPlaylistBtn').style.display = "none";
+            renderPlaylistsSidebar();
+            document.getElementById('sideHomeBtn').classList.remove('active');
+            document.getElementById('sideSearchBtn').classList.add('active');
+            document.getElementById('searchWrapper').style.display = 'block';
+            document.getElementById('pageMainTitle').innerText = 'Cerca tra i tuoi brani';
+            document.getElementById('searchInput').focus();
+            renderHomeGrid();
         }
 
         function executeSearch() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const cards = document.querySelectorAll('.music-card');
-
             cards.forEach(card => {
                 const title = card.querySelector('h3').innerText.toLowerCase();
                 const artist = card.querySelector('p').innerText.toLowerCase();
-
                 if (title.includes(query) || artist.includes(query)) {
                     card.classList.remove('hidden-search');
                 } else {
@@ -592,75 +1086,24 @@
             });
         }
 
-        // --- SISTEMA DI CONTROLLO ACCESSO (PIN) ---
-        function openPinGate() {
-            currentPinInput = "";
-            document.getElementById('pinDisplay').innerText = "";
-            document.getElementById('pinGate').classList.add('active');
-        }
-
-        function abortAccess() {
-            document.getElementById('pinGate').classList.remove('active');
-        }
-
-        function pressKey(number) {
-            if(currentPinInput.length < 6) {
-                currentPinInput += number;
-                document.getElementById('pinDisplay').innerText = "*".repeat(currentPinInput.length);
-            }
-            
-            if(currentPinInput === TARGET_PIN) {
-                setTimeout(() => {
-                    document.getElementById('pinGate').classList.remove('active');
-                    document.getElementById('adminDashboard').classList.add('active');
-                }, 200);
-            } else if (currentPinInput.length === 6) {
-                setTimeout(() => {
-                    alert("PIN ERRATO!");
-                    clearPin();
-                }, 100);
-            }
-        }
-
-        function clearPin() {
-            currentPinInput = "";
-            document.getElementById('pinDisplay').innerText = "";
-        }
-
-        function exitDashboard() {
-            document.getElementById('adminDashboard').classList.remove('active');
-        }
-
-        // --- GESTIONE DEI CONTROLLI AUDIO DEL PLAYER ---
-        function streamTrack(audioUrl, title, artist, coverUrl) {
-            document.getElementById('currentTitle').innerText = title;
-            document.getElementById('currentArtist').innerText = artist;
-            document.getElementById('currentCover').src = coverUrl;
-
-            audioEngine.src = audioUrl;
+        function streamTrackData(track) {
+            document.getElementById('currentTitle').innerText = track.title;
+            document.getElementById('currentArtist').innerText = track.artist;
+            document.getElementById('currentCover').src = track.cover;
+            audioEngine.src = track.audio;
             audioEngine.load();
             audioEngine.play().then(() => {
                 masterPlayBtn.innerText = "⏸";
-            }).catch(e => {
-                alert("Errore nel caricamento del file audio. Controlla la validità del link.");
-            });
+            }).catch(() => { console.log("Errore stream audio."); });
         }
 
         function togglePlayback() {
-            if(!audioEngine.src) {
-                alert("Seleziona prima una traccia dalla Home!");
-                return;
-            }
-            if(audioEngine.paused) {
-                audioEngine.play();
-                masterPlayBtn.innerText = "⏸";
-            } else {
-                audioEngine.pause();
-                masterPlayBtn.innerText = "▶";
-            }
+            if(!audioEngine.src) return alert("Scegli un brano dalla Home!");
+            if(audioEngine.paused) { audioEngine.play(); masterPlayBtn.innerText = "⏸"; } 
+            else { audioEngine.pause(); masterPlayBtn.innerText = "▶"; }
         }
 
-        audioEngine.ontimeupdate = function() {
+        audioEngine.ontimeupdate = () => {
             if(!isNaN(audioEngine.duration)) {
                 timeline.max = Math.floor(audioEngine.duration);
                 timeline.value = Math.floor(audioEngine.currentTime);
@@ -669,56 +1112,68 @@
             }
         };
 
-        function changeTimelinePosition() {
-            audioEngine.currentTime = timeline.value;
-        }
-
-        function adjustVolume() {
-            audioEngine.volume = volumeControl.value;
-        }
-
+        function changeTimelinePosition() { audioEngine.currentTime = timeline.value; }
+        function adjustVolume() { audioEngine.volume = volumeControl.value; }
         function convertSecondsToMinutes(seconds) {
             let mins = Math.floor(seconds / 60);
             let secs = Math.floor(seconds % 60);
             return mins + ":" + (secs < 10 ? "0" + secs : secs);
         }
 
-        // --- INSERIMENTO TRACCE DALLA DASHBOARD ---
-        function commitNewTrack(event) {
-            event.preventDefault();
+        function exitDashboard() { document.getElementById('adminDashboard').classList.remove('active'); resetFormState(); }
 
-            const title = document.getElementById('formTitle').value;
-            const artist = document.getElementById('formArtist').value;
-            const cover = document.getElementById('formCover').value;
-            const audioUrl = document.getElementById('formAudio').value;
+        function syncAdminTracksList() {
+            const listContainer = document.getElementById('adminTracksList');
+            listContainer.innerHTML = ""; 
+            if(window.allTracksData.length === 0) {
+                listContainer.innerHTML = "<p style='color:var(--text-gray); font-size:14px;'>Nessun brano nel cloud.</p>";
+                return;
+            }
+            window.allTracksData.forEach(track => {
+                const item = document.createElement('div');
+                item.className = 'manage-track-item';
+                item.innerHTML = `
+                    <div class="manage-track-info">
+                        <img src="${track.cover}" alt="Cover">
+                        <div class="manage-track-meta">
+                            <h4>${track.title}</h4>
+                            <p>${track.artist}</p>
+                        </div>
+                    </div>
+                    <div class="manage-actions">
+                        <button type="button" class="btn-manage btn-edit-action" onclick="prepareEditTrack('${track.id}', '${track.title.replace(/'/g, "\\'")}', '${track.artist.replace(/'/g, "\\'")}', '${track.cover.replace(/'/g, "\\'")}', '${track.audio.replace(/'/g, "\\'")}')">Modifica</button>
+                        <button type="button" class="btn-manage btn-delete-action" onclick="window.deleteTrack('${track.id}')">Elimina</button>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
 
-            const grid = document.getElementById('dynamicGrid');
-            const newCard = document.createElement('div');
-            newCard.className = 'music-card';
-            
-            const cleanTitle = title.replace(/'/g, "\\'");
-            const cleanArtist = artist.replace(/'/g, "\\'");
-            const cleanAudio = audioUrl.replace(/'/g, "\\'");
-            const cleanCover = cover.replace(/'/g, "\\'");
+        function prepareEditTrack(id, title, artist, cover, audio) {
+            document.getElementById('editingTrackId').value = id;
+            document.getElementById('formTitle').value = title;
+            document.getElementById('formArtist').value = artist;
+            document.getElementById('formCover').value = cover;
+            document.getElementById('formAudio').value = audio;
+            document.getElementById('dashFormTitle').innerText = "Modifica Brano Corrente";
+            document.getElementById('formSubmitBtn').innerText = "Salva Modifiche";
+            document.getElementById('cancelEditBtn').style.display = "block";
+        }
 
-            newCard.setAttribute('onclick', `streamTrack('${cleanAudio}', '${cleanTitle}', '${cleanArtist}', '${cleanCover}')`);
-            
-            newCard.innerHTML = `
-                <img src="${cover}" alt="Cover" onerror="this.src='https://via.placeholder.com/150/e50914/ffffff?text=Errore+Link'">
-                <h3>${title}</h3>
-                <p>${artist}</p>
-            `;
-
-            grid.insertBefore(newCard, grid.firstChild);
-
+        function resetFormState() {
+            document.getElementById('editingTrackId').value = "";
             document.getElementById('formTitle').value = "";
             document.getElementById('formArtist').value = "";
             document.getElementById('formCover').value = "";
             document.getElementById('formAudio').value = "";
-
-            exitDashboard();
-            alert("Nuovo brano inserito con successo in cima alla Home!");
+            document.getElementById('dashFormTitle').innerText = "Inserisci Nuovo Brano";
+            document.getElementById('formSubmitBtn').innerText = "Carica Brano in Home";
+            document.getElementById('cancelEditBtn').style.display = "none";
         }
+
+        window.renderHomeGrid = renderHomeGrid;
+        window.renderPlaylistsSidebar = renderPlaylistsSidebar;
+        window.prepareEditTrack = prepareEditTrack;
     </script>
 </body>
 </html>

@@ -691,28 +691,28 @@
             </div>
 
             <div class="dash-layout">
-                <form class="input-form" onsubmit="commitTrackForm(event)">
+                <div class="input-form">
                     <input type="hidden" id="editingTrackId" value="">
                     
                     <div class="form-row">
                         <label>Titolo del Brano</label>
-                        <input type="text" id="formTitle" placeholder="Es. Blinding Lights" required>
+                        <input type="text" id="formTitle" placeholder="Es. Blinding Lights">
                     </div>
                     <div class="form-row">
                         <label>Artista / Gruppo</label>
-                        <input type="text" id="formArtist" placeholder="Es. The Weeknd" required>
+                        <input type="text" id="formArtist" placeholder="Es. The Weeknd">
                     </div>
                     <div class="form-row">
                         <label>URL Immagine Copertina</label>
-                        <input type="url" id="formCover" placeholder="Incolla link (.jpg / .png)" required>
+                        <input type="url" id="formCover" placeholder="Incolla link (.jpg / .png)">
                     </div>
                     <div class="form-row">
                         <label>URL Traccia Audio (.mp3)</label>
-                        <input type="url" id="formAudio" placeholder="Incolla link file audio online" required>
+                        <input type="url" id="formAudio" placeholder="Incolla link file audio online">
                     </div>
-                    <button type="submit" class="btn-submit-track" id="formSubmitBtn">Carica Brano in Home</button>
+                    <button type="button" class="btn-submit-track" id="formSubmitBtn" onclick="window.commitTrackForm()">Carica Brano in Home</button>
                     <button type="button" class="btn-submit-track" id="cancelEditBtn" style="background-color:#444; display:none;" onclick="resetFormState()">Annulla Modifica</button>
-                </form>
+                </div>
 
                 <div class="manage-tracks-container">
                     <h3 style="margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid #333;">Gestione Brani Esistenti</h3>
@@ -791,7 +791,7 @@
                     syncAdminTracksList();
                     document.getElementById('adminDashboard').classList.add('active');
                 } else {
-                    alert("Accesso Negato. Questo account Google non ha i privileges di amministrazione.");
+                    alert("Accesso Negato. Questo account Google non ha i privilegi di amministrazione.");
                     await signOut(auth);
                 }
             } catch(error) {
@@ -817,9 +817,7 @@
         });
 
         // --- CRUD OPERAZIONI AMMINISTRATORE ---
-        async function commitTrackForm(event) {
-            event.preventDefault();
-            
+        async function commitTrackForm() {
             if(!auth.currentUser) {
                 return alert("Errore: Non risulta nessun utente autenticato. Effettua nuovamente il login alla Dashboard.");
             }
@@ -827,12 +825,21 @@
                 return alert("Errore: L'account corrente (" + auth.currentUser.email + ") non ha i permessi amministratore.");
             }
 
+            const title = document.getElementById('formTitle').value.trim();
+            const artist = document.getElementById('formArtist').value.trim();
+            const cover = document.getElementById('formCover').value.trim();
+            const audio = document.getElementById('formAudio').value.trim();
+
+            if(!title || !artist || !cover || !audio) {
+                return alert("Compila tutti i campi prima di inviare il brano.");
+            }
+
             const targetId = document.getElementById('editingTrackId').value;
             const trackPayload = {
-                title: document.getElementById('formTitle').value.trim(),
-                artist: document.getElementById('formArtist').value.trim(),
-                cover: document.getElementById('formCover').value.trim(),
-                audio: document.getElementById('formAudio').value.trim(),
+                title: title,
+                artist: artist,
+                cover: cover,
+                audio: audio,
                 timestamp: Date.now()
             };
 
@@ -848,7 +855,7 @@
                 resetFormState();
             } catch(e) { 
                 console.error("Errore Firebase Write:", e);
-                alert("Errore durante il caricamento del brano: " + e.message + "\n\nControlla di aver aggiornato correttamente le 'Rules' (Regole) della scheda Realtime Database sulla console Firebase."); 
+                alert("Errore durante il caricamento del brano: " + e.message); 
             }
         }
 
